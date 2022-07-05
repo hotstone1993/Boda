@@ -14,7 +14,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.newstone.boda.databinding.ActivityMainBinding
-import com.newstone.nativelib.NativeLib
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -35,11 +34,24 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
+        binding.glSurfaceView.setEGLContextFactory(ContextFactory())
+        binding.glSurfaceView.setEGLConfigChooser(ConfigChooser())
+        binding.glSurfaceView.setRenderer(CameraRenderer())
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             baseContext, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.glSurfaceView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.glSurfaceView.onPause()
     }
 
     override fun onDestroy() {
@@ -77,7 +89,6 @@ class MainActivity : AppCompatActivity() {
 
             imageAnalyzer.setAnalyzer(executor, { image ->
                 // process(image)
-                NativeLib.step()
             })
 
             // Select back camera as a default
