@@ -2,6 +2,7 @@ package com.newstone.boda
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.opengl.GLSurfaceView.RENDERMODE_WHEN_DIRTY
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -29,14 +30,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (allPermissionsGranted()) {
-            startCamera()
+            // startCamera()
+            initGlSurfaceView()
         } else {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
-        binding.glSurfaceView.setEGLContextFactory(ContextFactory())
-        binding.glSurfaceView.setEGLConfigChooser(ConfigChooser())
-        binding.glSurfaceView.setRenderer(CameraRenderer())
+    }
+
+    private fun initGlSurfaceView() {
+        binding.glSurfaceView.apply {
+            setEGLContextFactory(ContextFactory())
+            setEGLConfigChooser(ConfigChooser())
+            setRenderer(CameraRenderer())
+        }
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
