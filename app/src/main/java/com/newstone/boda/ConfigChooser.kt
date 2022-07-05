@@ -20,6 +20,7 @@ class ConfigChooser: GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_RED_SIZE, redSize,
             EGL10.EGL_GREEN_SIZE, greenSize,
             EGL10.EGL_BLUE_SIZE, blueSize,
+            EGL10.EGL_ALPHA_SIZE, alphaSize,
             EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
             EGL10.EGL_SAMPLES, sampleSize,
             EGL10.EGL_DEPTH_SIZE, depthSize,

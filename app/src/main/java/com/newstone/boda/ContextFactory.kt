@@ -13,7 +13,8 @@ class ContextFactory : EGLContextFactory {
         eglConfig: EGLConfig
     ): EGLContext {
         val EGL_CONTEXT_CLIENT_VERSION = 0x3098
-        val attrib_list = intArrayOf(EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE)
+        val glVersion = 3
+        val attrib_list = intArrayOf(EGL_CONTEXT_CLIENT_VERSION, glVersion, EGL10.EGL_NONE)
         return egl.eglCreateContext(display, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list)
     }
 
