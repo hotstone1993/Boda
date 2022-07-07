@@ -23,11 +23,14 @@
 static const char  glVertexShader[] =
         "attribute vec4 vertexPosition;\n"
         "attribute vec3 vertexColour;\n"
+        "attribute vec2 attributeTextureCoordinate;\n"
         "varying vec3 fragColour;\n"
+        "varying vec2 textureCord;\n"
         "void main()\n"
         "{\n"
         "    gl_Position = vertexPosition;\n"
         "    fragColour = vertexColour;\n"
+        "    textureCord = attributeTextureCoordinate;\n"
         "}\n";
 /* [vertexShader] */
 
@@ -35,9 +38,11 @@ static const char  glVertexShader[] =
 static const char  glFragmentShader[] =
         "precision mediump float;\n"
         "varying vec3 fragColour;\n"
+        "uniform sampler2D texture;\n"
+        "varying vec2 textureCord;\n"
         "void main()\n"
         "{\n"
-        "    gl_FragColor = vec4(fragColour, 1.0);\n"
+        "    gl_FragColor = texture2D(texture, textureCord) + vec4(fragColour, 1.0);\n"
         "}\n";
 /* [fragmentShader] */
 
@@ -125,6 +130,7 @@ GLuint createProgram(const char* vertexSource, const char * fragmentSource)
 GLuint simpleCubeProgram;
 GLuint vertexLocation;
 GLuint vertexColourLocation;
+GLuint textureCoordinateLocation;
 
 /* [setupGraphics] */
 bool setupGraphics(int width, int height)
@@ -139,6 +145,7 @@ bool setupGraphics(int width, int height)
 
     vertexLocation = glGetAttribLocation(simpleCubeProgram, "vertexPosition");
     vertexColourLocation = glGetAttribLocation(simpleCubeProgram, "vertexColour");
+    textureCoordinateLocation = glGetAttribLocation(simpleCubeProgram, "attributeTextureCoordinate");
 
     glEnable(GL_DEPTH_TEST);
 
@@ -164,9 +171,15 @@ GLfloat colour[] = {1.0f, 0.0f, 0.0f,
 };
 /* [colourComponents] */
 
+float textureCoordinatesData[] = {0.0f, 0.0f,
+                                  1.0f, 0.0f,
+                                  0.0f, 1.0f,
+                                  1.0f, 1.0f };
+
 /* [indices] */
 GLushort indices[] = {0, 2, 3, 0, 1, 3};
 /* [indices] */
+
 
 /* [renderFrame] */
 void renderFrame()
@@ -179,6 +192,8 @@ void renderFrame()
     glEnableVertexAttribArray(vertexLocation);
     glVertexAttribPointer(vertexColourLocation, 3, GL_FLOAT, GL_FALSE, 0, colour);
     glEnableVertexAttribArray(vertexColourLocation);
+    glVertexAttribPointer(textureCoordinateLocation, 2, GL_FLOAT, GL_FALSE, 0, textureCoordinatesData);
+    glEnableVertexAttribArray(textureCoordinateLocation);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
 }
