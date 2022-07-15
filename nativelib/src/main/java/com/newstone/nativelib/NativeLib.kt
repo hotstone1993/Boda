@@ -8,6 +8,6 @@ class NativeLib {
         @JvmStatic
         external fun init(width: Int, height: Int)
         @JvmStatic
-        external fun step()
+        external fun step(input: ByteArray)
     }
 }

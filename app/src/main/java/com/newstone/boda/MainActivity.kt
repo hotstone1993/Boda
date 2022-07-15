@@ -2,11 +2,11 @@ package com.newstone.boda
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.opengl.GLSurfaceView.RENDERMODE_WHEN_DIRTY
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Surface
 import android.widget.Toast
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private lateinit var cameraExecutor: ExecutorService
     private val executor = Executors.newSingleThreadExecutor()
+    private var input: ByteArray = ByteArray(960 * 540 * 4, {0})
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (allPermissionsGranted()) {
-            // startCamera()
+            startCamera()
             initGlSurfaceView()
         } else {
             ActivityCompat.requestPermissions(
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         binding.glSurfaceView.apply {
             setEGLContextFactory(ContextFactory())
             setEGLConfigChooser(ConfigChooser())
-            setRenderer(CameraRenderer())
+            setRenderer(CameraRenderer(input))
         }
     }
 
@@ -84,35 +85,30 @@ class MainActivity : AppCompatActivity() {
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
-        cameraProviderFuture.addListener({
-            // Used to bind the lifecycle of cameras to the lifecycle owner
+        cameraProviderFuture.addListener( {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             val imageAnalyzer = ImageAnalysis.Builder()
-                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .setTargetRotation(Surface.ROTATION_0)
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                 .build()
 
             imageAnalyzer.setAnalyzer(executor, { image ->
-                // process(image)
+                val pixelStride = image.planes.first().pixelStride
+                image.planes.first().buffer.get(input, 0, image.width * image.height * pixelStride)
+                image.close()
             })
 
-            // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
             try {
-                // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
-
-                // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
                     this, cameraSelector, imageAnalyzer)
-
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
-
         }, ContextCompat.getMainExecutor(this))
     }
 

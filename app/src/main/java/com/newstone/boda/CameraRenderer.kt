@@ -5,7 +5,7 @@ import com.newstone.nativelib.NativeLib
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class CameraRenderer: GLSurfaceView.Renderer {
+class CameraRenderer(val pixels: ByteArray): GLSurfaceView.Renderer {
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
     }
 
@@ -14,6 +14,6 @@ class CameraRenderer: GLSurfaceView.Renderer {
     }
 
     override fun onDrawFrame(gl: GL10?) {
-        NativeLib.step()
+        NativeLib.step(pixels)
     }
 }

@@ -10,14 +10,43 @@
 
 #include "Matrix.h"
 #include <jni.h>
-#include <jni.h>
-#include <jni.h>
-#include <jni.h>
+
+#include <vector>
 
 #define LOG_TAG "libNative"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
+int width;
+int height;
+
+GLuint loadSimpleTexture(GLubyte* array)
+{
+    /* Texture Object Handle. */
+    GLuint textureId;
+
+    /* [placeTextureInMemory] */
+    /* Use tightly packed data. */
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    /* Generate a texture object. */
+    glGenTextures(1, &textureId);
+
+    /* Activate a texture. */
+    glActiveTexture(GL_TEXTURE0);
+
+    /* Bind the texture object. */
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    /* Load the texture. */
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 960, 540, 0, GL_RGBA, GL_UNSIGNED_BYTE, array);
+
+    /* Set the filtering mode. */
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    return textureId;
+}
 
 /* [vertexShader] */
 static const char  glVertexShader[] =
@@ -42,7 +71,7 @@ static const char  glFragmentShader[] =
         "varying vec2 textureCord;\n"
         "void main()\n"
         "{\n"
-        "    gl_FragColor = texture2D(texture, textureCord) + vec4(fragColour, 1.0);\n"
+        "    gl_FragColor = texture2D(texture, textureCord);\n"
         "}\n";
 /* [fragmentShader] */
 
@@ -133,7 +162,8 @@ GLuint vertexColourLocation;
 GLuint textureCoordinateLocation;
 
 /* [setupGraphics] */
-bool setupGraphics(int width, int height)
+
+bool setupGraphics()
 {
     simpleCubeProgram = createProgram(glVertexShader, glFragmentShader);
 
@@ -182,7 +212,7 @@ GLushort indices[] = {0, 2, 3, 0, 1, 3};
 
 
 /* [renderFrame] */
-void renderFrame()
+void renderFrame(GLubyte* array)
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -195,18 +225,24 @@ void renderFrame()
     glVertexAttribPointer(textureCoordinateLocation, 2, GL_FLOAT, GL_FALSE, 0, textureCoordinatesData);
     glEnableVertexAttribArray(textureCoordinateLocation);
 
+    loadSimpleTexture(array);
+
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_newstone_nativelib_NativeLib_init(JNIEnv* env, jclass clazz, jint width, jint height)
+Java_com_newstone_nativelib_NativeLib_init(JNIEnv* env, jclass clazz, jint w, jint h)
 {
-    setupGraphics(width, height);
+    width = w;
+    height = h;
+    setupGraphics();
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_newstone_nativelib_NativeLib_step(JNIEnv* env, jclass thiz) {
-    renderFrame();
+Java_com_newstone_nativelib_NativeLib_step(JNIEnv* env, jclass thiz, jbyteArray input) {
+    jbyte* inputBuffer = env->GetByteArrayElements(input, nullptr);
+    renderFrame(reinterpret_cast<GLubyte *>(inputBuffer));
+    env->ReleaseByteArrayElements(input, inputBuffer, JNI_ABORT);
 }
