@@ -6,6 +6,7 @@ project("nativelib")
 add_library(nativelib
              SHARED
              nativelib.cpp
+             MainScene.cpp
              Matrix.cpp)
 
 target_include_directories(nativelib PUBLIC
