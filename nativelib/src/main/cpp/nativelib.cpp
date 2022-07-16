@@ -201,10 +201,12 @@ GLfloat colour[] = {1.0f, 0.0f, 0.0f,
 };
 /* [colourComponents] */
 
-float textureCoordinatesData[] = {0.0f, 0.0f,
-                                  1.0f, 0.0f,
-                                  0.0f, 1.0f,
-                                  1.0f, 1.0f };
+float textureCoordinatesData[] = {
+                                0.0f, 1.0f,
+                                0.0f, 0.0f,
+                                1.0f, 1.0f,
+                                1.0f, 0.0f,
+                                };
 
 /* [indices] */
 GLushort indices[] = {0, 2, 3, 0, 1, 3};
