@@ -1,5 +1,5 @@
 #include <jni.h>
-#include "MainScene.h"
+#include "include/MainScene.h"
 
 const char* const INSTANCE = "nativeInstance";
 

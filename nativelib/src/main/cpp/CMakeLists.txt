@@ -7,10 +7,12 @@ add_library(nativelib
              SHARED
              nativelib.cpp
              MainScene.cpp
-             Matrix.cpp)
+             Matrix.cpp
+             object/PlaneObject.cpp)
 
 target_include_directories(nativelib PUBLIC
-                            ${CMAKE_CURRENT_SOURCE_DIR})
+                            ${CMAKE_CURRENT_SOURCE_DIR}/include
+                            ${CMAKE_CURRENT_SOURCE_DIR}/object/include)
 
 find_library( log-lib
               log )

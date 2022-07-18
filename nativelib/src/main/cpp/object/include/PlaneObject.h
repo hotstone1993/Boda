@@ -1,23 +1,22 @@
 //
-// Created by newst on 2022-07-17.
+// Created by newst on 2022-07-18.
 //
 
-#ifndef BODA_MAINSCENE_H
-#define BODA_MAINSCENE_H
+#ifndef BODA_PLANEOBJECT_H
+#define BODA_PLANEOBJECT_H
 
-class MainScene {
+#include "BaseObject.h"
+
+class PlaneObject: public BaseObject {
 public:
-    MainScene();
-    ~MainScene();
-    bool setupGraphic(int width, int height);
-    void renderFrame(unsigned char* array);
+    PlaneObject();
+    ~PlaneObject();
 
+    virtual void setupGraphic(unsigned int program) override;
+    virtual void renderFrame(unsigned char* array = nullptr) override;
 private:
-    unsigned int loadShader(unsigned int shaderType, const char* shaderSource);
     unsigned int loadSimpleTexture(unsigned char* array);
-    unsigned int createProgram(const char* vertexSource, const char * fragmentSource);
 
-    unsigned int simpleCubeProgram;
     unsigned int vertexLocation;
     unsigned int textureCoordinateLocation;
 
@@ -47,4 +46,4 @@ private:
 };
 
 
-#endif //BODA_MAINSCENE_H
+#endif //BODA_PLANEOBJECT_H
