@@ -8,8 +8,11 @@
 
 class BaseObject {
 public:
-    virtual void setupGraphic(unsigned int program) = 0;
+    virtual void setupGraphic(int width, int height) = 0;
     virtual void renderFrame(unsigned char* array = nullptr) = 0;
+
+protected:
+    unsigned int program = 0;
 };
 
 

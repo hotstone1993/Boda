@@ -7,10 +7,10 @@
 
 PlaneObject::PlaneObject(): indices {0, 2, 3, 0, 1, 3},
                             vertices {
-                                    -1.0f,  1.0f,  0.0f,
-                                    1.0f,  1.0f,  0.0f,
-                                    -1.0f, -1.0f,  0.0f,
-                                    1.0f, -1.0f,  0.0f },
+                                    -1.0f,  1.0f, 0.0f,
+                                    1.0f,  1.0f, 0.0f,
+                                    -1.0f, -1.0f, 0.0f,
+                                    1.0f, -1.0f, 0.0f },
                             textureCoordinates {
                                     0.0f, 1.0f,
                                     0.0f, 0.0f,
@@ -22,7 +22,9 @@ PlaneObject::PlaneObject(): indices {0, 2, 3, 0, 1, 3},
 PlaneObject::~PlaneObject() {
 }
 
-void PlaneObject::setupGraphic(unsigned int program) {
+void PlaneObject::setupGraphic(int width, int height) {
+    program = glCreateProgram();
+
     GLuint vertexShader = BODA::loadShader(GL_VERTEX_SHADER, glVertexShader);
     if (vertexShader == 0)
     {
@@ -65,6 +67,8 @@ void PlaneObject::setupGraphic(unsigned int program) {
 }
 
 void PlaneObject::renderFrame(unsigned char* array) {
+    glUseProgram(program);
+
     glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
     glEnableVertexAttribArray(vertexLocation);
     glVertexAttribPointer(textureCoordinateLocation, 2, GL_FLOAT, GL_FALSE, 0, textureCoordinates);

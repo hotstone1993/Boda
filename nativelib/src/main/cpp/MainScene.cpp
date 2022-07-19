@@ -9,8 +9,10 @@
 #include "include/MainScene.h"
 #include "object/include/BaseObject.h"
 #include "object/include/PlaneObject.h"
+#include "object/include/BoxObject.h"
 
 MainScene::MainScene() {
+    objects.push_back(std::make_unique<BoxObject>());
     objects.push_back(std::make_unique<PlaneObject>());
 }
 
@@ -19,18 +21,11 @@ MainScene::~MainScene() {
 }
 
 bool MainScene::setupGraphic(int width, int height) {
-    simpleCubeProgram = glCreateProgram();
-
-    if (simpleCubeProgram == 0)
-    {
-        return false;
-    }
     for (const std::unique_ptr<BaseObject>& object: objects) {
-        object->setupGraphic(simpleCubeProgram);
+        object->setupGraphic(width, height);
     }
 
     glEnable(GL_DEPTH_TEST);
-
     glViewport(0, 0, width, height);
 
     return true;
@@ -40,8 +35,6 @@ void MainScene::renderFrame(unsigned char* array)
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-    glUseProgram(simpleCubeProgram);
 
     for (const std::unique_ptr<BaseObject>& object: objects) {
         object->renderFrame(array);

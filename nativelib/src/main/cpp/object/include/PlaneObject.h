@@ -12,7 +12,7 @@ public:
     PlaneObject();
     ~PlaneObject();
 
-    virtual void setupGraphic(unsigned int program) override;
+    virtual void setupGraphic(int width, int height) override;
     virtual void renderFrame(unsigned char* array = nullptr) override;
 private:
     unsigned int loadSimpleTexture(unsigned char* array);
@@ -27,7 +27,6 @@ private:
     const char* glVertexShader =
             "attribute vec4 vertexPosition;\n"
             "attribute vec2 attributeTextureCoordinate;\n"
-            "varying vec3 fragColour;\n"
             "varying vec2 textureCord;\n"
             "void main()\n"
             "{\n"
