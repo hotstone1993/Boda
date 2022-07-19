@@ -70,9 +70,11 @@ void PlaneObject::renderFrame(unsigned char* array) {
     glVertexAttribPointer(textureCoordinateLocation, 2, GL_FLOAT, GL_FALSE, 0, textureCoordinates);
     glEnableVertexAttribArray(textureCoordinateLocation);
 
-    loadSimpleTexture(array);
+    GLuint id = loadSimpleTexture(array);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+
+    glDeleteTextures(1, &id);
 }
 
 unsigned int PlaneObject::loadSimpleTexture(unsigned char* array)
