@@ -12,8 +12,8 @@
 #include "object/include/BoxObject.h"
 
 MainScene::MainScene() {
-    objects.push_back(std::make_unique<BoxObject>());
     objects.push_back(std::make_unique<PlaneObject>());
+    objects.push_back(std::make_unique<BoxObject>());
 }
 
 MainScene::~MainScene() {
@@ -24,7 +24,6 @@ bool MainScene::setupGraphic(int width, int height) {
     for (const std::unique_ptr<BaseObject>& object: objects) {
         object->setupGraphic(width, height);
     }
-
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);
 

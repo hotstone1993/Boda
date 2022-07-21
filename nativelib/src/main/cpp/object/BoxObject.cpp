@@ -9,6 +9,9 @@ BoxObject::BoxObject() {
 }
 
 BoxObject::~BoxObject() {
+    if (program != 0) {
+        glDeleteProgram(program);
+    }
 }
 
 void BoxObject::setupGraphic(int width, int height) {
@@ -31,6 +34,7 @@ void BoxObject::setupGraphic(int width, int height) {
         glAttachShader(program, vertexShader);
         glAttachShader(program, fragmentShader);
         glLinkProgram(program);
+        glUseProgram(program);
         GLint linkStatus = GL_FALSE;
         glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
         if(linkStatus != GL_TRUE)
@@ -56,7 +60,11 @@ void BoxObject::setupGraphic(int width, int height) {
     projectionLocation = glGetUniformLocation(program, "projection");
     modelViewLocation = glGetUniformLocation(program, "modelView");
 
-    matrixPerspective(projectionMatrix, 45, (float)width / (float)height, 0.1f, 100);
+    if (width < height) {
+        matrixPerspective(projectionMatrix, 45, (float)width / (float)height, 0.1f, 100);
+    } else {
+        matrixPerspective(projectionMatrix, 45, (float)height / (float)width, 0.1f, 100);
+    }
 }
 
 void BoxObject::renderFrame(unsigned char* array) {
@@ -77,7 +85,7 @@ void BoxObject::renderFrame(unsigned char* array) {
     glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, projectionMatrix);
     glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, modelViewMatrix);
 
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, indices);
+    glDrawElements(GL_LINE_LOOP, 36, GL_UNSIGNED_SHORT, indices);
 
     angle += 1;
     if (angle > 360)
