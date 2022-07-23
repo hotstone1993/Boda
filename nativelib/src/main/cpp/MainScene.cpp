@@ -11,7 +11,7 @@
 #include "object/include/PlaneObject.h"
 #include "object/include/BoxObject.h"
 
-MainScene::MainScene() {
+MainScene::MainScene(): ml(std::make_unique<Noon>()) {
     objects.push_back(std::make_unique<PlaneObject>());
     objects.push_back(std::make_unique<BoxObject>());
 }

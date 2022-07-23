@@ -7,6 +7,8 @@
 
 #include "list"
 
+#include "Noon.h"
+
 class BaseObject;
 
 class MainScene {
@@ -18,6 +20,7 @@ public:
     void renderFrame(unsigned char* array);
 
 private:
+    std::unique_ptr<Noon> ml;
     std::list<std::unique_ptr<BaseObject>> objects;
 };
 
