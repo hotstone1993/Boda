@@ -8,7 +8,8 @@ add_library(nativelib
              nativelib.cpp
              MainScene.cpp
              Matrix.cpp
-             object/PlaneObject.cpp)
+             object/PlaneObject.cpp
+             object/BoxObject.cpp)
 
 target_include_directories(nativelib PUBLIC
                             ${CMAKE_CURRENT_SOURCE_DIR}/include

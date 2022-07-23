@@ -18,9 +18,6 @@ public:
     void renderFrame(unsigned char* array);
 
 private:
-    unsigned int createProgram();
-
-    unsigned int simpleCubeProgram;
     std::list<std::unique_ptr<BaseObject>> objects;
 };
 

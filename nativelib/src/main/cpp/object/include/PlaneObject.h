@@ -12,14 +12,19 @@ public:
     PlaneObject();
     ~PlaneObject();
 
-    virtual void setupGraphic(unsigned int program) override;
+    virtual void setupGraphic(int width, int height) override;
     virtual void renderFrame(unsigned char* array = nullptr) override;
 private:
     unsigned int loadSimpleTexture(unsigned char* array);
+    unsigned int vertexShader = 0;
+    unsigned int fragmentShader = 0;
+    unsigned int vertexLocation = 0;
+    unsigned int textureCoordinateLocation = 0;
+    unsigned int projectionLocation;
+    unsigned int modelViewLocation;
 
-    unsigned int vertexLocation;
-    unsigned int textureCoordinateLocation;
-
+    float projectionMatrix[16];
+    float modelViewMatrix[16];
     unsigned short indices[6];
     float vertices[12];
     float textureCoordinates[8];
@@ -27,11 +32,12 @@ private:
     const char* glVertexShader =
             "attribute vec4 vertexPosition;\n"
             "attribute vec2 attributeTextureCoordinate;\n"
-            "varying vec3 fragColour;\n"
             "varying vec2 textureCord;\n"
+            "uniform mat4 projection;\n"
+            "uniform mat4 modelView;\n"
             "void main()\n"
             "{\n"
-            "    gl_Position = vertexPosition;\n"
+            "    gl_Position = projection * modelView * vertexPosition;\n"
             "    textureCord = attributeTextureCoordinate;\n"
             "}\n";
 
