@@ -1,0 +1,3 @@
+[submodule "thirdparty/Noon"]
+	path = thirdparty/Noon
+	url = https://github.com/hotstone1993/Noon
