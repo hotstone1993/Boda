@@ -16,7 +16,7 @@ public:
     MainScene();
     ~MainScene();
 
-    bool setupGraphic(int width, int height);
+    bool setupGraphic(int width, int height, const char* model, size_t modelSize);
     void renderFrame(unsigned char* array);
 
 private:

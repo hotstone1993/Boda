@@ -20,7 +20,21 @@ MainScene::~MainScene() {
 
 }
 
-bool MainScene::setupGraphic(int width, int height) {
+bool MainScene::setupGraphic(int width, int height, const char* model, size_t modelSize) {
+    InferenceInfo info;
+    info.type = IMAGE;
+    info.model = nullptr;
+    info.modelSize = 0;
+    info.input.shape = {630 ,480, 4};
+    info.output = {};
+    TFLInfo mlInfo;
+    mlInfo.delegateType = GPU;
+    mlInfo.numThread = 4;
+    mlInfo.delegateType = false;
+
+    ml->loadModel(model, modelSize, TENSORFLOW_LITE, mlInfo);
+    ml->setup(info);
+
     for (const std::unique_ptr<BaseObject>& object: objects) {
         object->setupGraphic(width, height);
     }
