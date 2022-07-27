@@ -23,8 +23,6 @@ MainScene::~MainScene() {
 bool MainScene::setupGraphic(int width, int height, const char* model, size_t modelSize) {
     InferenceInfo info;
     info.type = IMAGE;
-    info.model = nullptr;
-    info.modelSize = 0;
     info.input.shape = {630 ,480, 4};
     info.output = {};
     TFLInfo mlInfo;
@@ -34,6 +32,8 @@ bool MainScene::setupGraphic(int width, int height, const char* model, size_t mo
 
     ml->loadModel(model, modelSize, TENSORFLOW_LITE, mlInfo);
     ml->setup(info);
+
+    tempBuffer = std::make_unique<float[]>(4 * 630 * 480 * 4);
 
     for (const std::unique_ptr<BaseObject>& object: objects) {
         object->setupGraphic(width, height);
@@ -48,6 +48,12 @@ void MainScene::renderFrame(unsigned char* array)
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+    for (size_t idx = 0; idx < 4 * 630 * 480 * 4; ++idx) {
+        tempBuffer[idx] = (array[idx] / 256.f) - 0.5f;
+    }
+
+    ml->inference(tempBuffer.get());
 
     for (const std::unique_ptr<BaseObject>& object: objects) {
         object->renderFrame(array);
