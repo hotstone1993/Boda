@@ -6,8 +6,7 @@
 #define BODA_MAINSCENE_H
 
 #include "list"
-
-#include "Noon.h"
+#include "MLDelegate.h"
 
 class BaseObject;
 
@@ -20,10 +19,8 @@ public:
     void renderFrame(unsigned char* array);
 
 private:
-    std::unique_ptr<float[]> tempBuffer;
-
-    std::unique_ptr<Noon> ml;
     std::list<std::unique_ptr<BaseObject>> objects;
+    MLDelegate mlDelegate;
 };
 
 

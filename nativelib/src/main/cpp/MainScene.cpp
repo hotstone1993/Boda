@@ -11,29 +11,17 @@
 #include "object/include/PlaneObject.h"
 #include "object/include/BoxObject.h"
 
-MainScene::MainScene(): ml(std::make_unique<Noon>()) {
+MainScene::MainScene() {
     objects.push_back(std::make_unique<PlaneObject>());
     objects.push_back(std::make_unique<BoxObject>());
 }
 
 MainScene::~MainScene() {
-
 }
 
 bool MainScene::setupGraphic(int width, int height, const char* model, size_t modelSize) {
-    InferenceInfo info;
-    info.type = IMAGE;
-    info.input.shape = {630 ,480, 4};
-    info.output = {};
-    TFLInfo mlInfo;
-    mlInfo.delegateType = GPU;
-    mlInfo.numThread = 4;
-    mlInfo.delegateType = false;
 
-    ml->loadModel(model, modelSize, TENSORFLOW_LITE, mlInfo);
-    ml->setup(info);
-
-    tempBuffer = std::make_unique<float[]>(4 * 630 * 480 * 4);
+    mlDelegate.setup(model, modelSize);
 
     for (const std::unique_ptr<BaseObject>& object: objects) {
         object->setupGraphic(width, height);
@@ -44,16 +32,11 @@ bool MainScene::setupGraphic(int width, int height, const char* model, size_t mo
     return true;
 }
 
-void MainScene::renderFrame(unsigned char* array)
-{
+void MainScene::renderFrame(unsigned char* array) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    for (size_t idx = 0; idx < 4 * 630 * 480 * 4; ++idx) {
-        tempBuffer[idx] = (array[idx] / 256.f) - 0.5f;
-    }
-
-    ml->inference(tempBuffer.get());
+    mlDelegate.process(array);
 
     for (const std::unique_ptr<BaseObject>& object: objects) {
         object->renderFrame(array);

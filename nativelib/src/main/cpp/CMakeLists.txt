@@ -8,6 +8,7 @@ add_library(${PROJECT_NAME}
              nativelib.cpp
              MainScene.cpp
              Matrix.cpp
+             MLDelegate.cpp
              object/PlaneObject.cpp
              object/BoxObject.cpp)
 
