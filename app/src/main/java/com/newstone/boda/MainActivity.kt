@@ -5,6 +5,8 @@ import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Surface
 import android.widget.Toast
@@ -43,11 +45,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initGlSurfaceView() {
+        val listener = object: CameraRenderer.FPSEventListener {
+            override fun handle(fps: String) {
+                Handler(Looper.getMainLooper()).post {
+                    binding.fps.text = fps
+                }
+            }
+        }
+
         binding.glSurfaceView.apply {
             val model = getModel(resources.assets)
             setEGLContextFactory(ContextFactory())
             setEGLConfigChooser(ConfigChooser())
-            setRenderer(CameraRenderer(input, model))
+            setRenderer(CameraRenderer(input, listener, model))
         }
     }
 
