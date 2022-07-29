@@ -20,6 +20,8 @@ private:
     std::unique_ptr<Noon> ml;
     std::unique_ptr<float[]> tempBuffer;
 
+    std::vector<std::unique_ptr<float[]>> outputs;
+
     // hardcoding
     int width = 630;
     int height = 480;

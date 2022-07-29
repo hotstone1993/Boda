@@ -26,6 +26,10 @@ void MLDelegate::setup(const char* model, size_t modelSize) {
     ml->setup(info);
 
     tempBuffer = std::make_unique<float[]>(width * height * pixelStride);
+
+    for (int idx = 0; idx < ml->getOutputArraySize(); ++idx) {
+        outputs.emplace_back(std::make_unique<float[]>(ml->getOutputBufferSize(idx)));
+    }
 }
 
 void MLDelegate::process(const unsigned char* array) {
@@ -34,5 +38,9 @@ void MLDelegate::process(const unsigned char* array) {
     }
 
     ml->inference(tempBuffer.get());
+
+    for (int idx = 0; idx < outputs.size(); ++idx) {
+        ml->getOutput(idx, outputs[idx].get());
+    }
 }
 
