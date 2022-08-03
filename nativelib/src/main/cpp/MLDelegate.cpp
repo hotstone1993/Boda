@@ -5,7 +5,22 @@
 #include "include/MLDelegate.h"
 
 
-MLDelegate::MLDelegate(): ml(std::make_unique<Noon>()) {
+MLDelegate::MLDelegate(): ml(std::make_unique<Noon>()),
+                            thread(std::thread([&]() {
+                                while (true) {
+                                    if (status != BufferStatus::READY) {
+                                        continue;
+                                    }
+                                    const std::lock_guard<std::mutex> lock(mutex);
+                                    status = BufferStatus::WRITTING;
+                                    ml->inference(tempBuffer.get());
+
+                                    for (int idx = 0; idx < outputs.size(); ++idx) {
+                                        ml->getOutput(idx, outputs[idx].get());
+                                    }
+                                    status = BufferStatus::DONE;
+                                }
+                            })) {
 }
 
 MLDelegate::~MLDelegate() {
@@ -32,15 +47,14 @@ void MLDelegate::setup(const char* model, size_t modelSize) {
     }
 }
 
-void MLDelegate::process(const unsigned char* array) {
+void MLDelegate::setArray(const unsigned char* array) {
+    if (status != BufferStatus::DONE) {
+        return;
+    }
+    status = BufferStatus::WAIT;
     for (size_t idx = 0; idx < pixelStride * height * width; ++idx) {
         tempBuffer[idx] = (array[idx] / 256.f) - 0.5f;
     }
-
-    ml->inference(tempBuffer.get());
-
-    for (int idx = 0; idx < outputs.size(); ++idx) {
-        ml->getOutput(idx, outputs[idx].get());
-    }
+    status = BufferStatus::READY;
 }
 

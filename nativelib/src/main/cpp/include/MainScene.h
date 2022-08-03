@@ -23,5 +23,4 @@ private:
     MLDelegate mlDelegate;
 };
 
-
 #endif //BODA_MAINSCENE_H

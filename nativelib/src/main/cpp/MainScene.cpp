@@ -36,7 +36,7 @@ void MainScene::renderFrame(unsigned char* array) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    mlDelegate.process(array);
+    mlDelegate.setArray(array);
 
     for (const std::unique_ptr<BaseObject>& object: objects) {
         object->renderFrame(array);

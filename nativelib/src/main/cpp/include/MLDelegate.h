@@ -6,8 +6,13 @@
 #define BODA_MLDELEGATE_H
 
 #include <memory>
+#include <thread>
 
 #include "Noon.h"
+
+enum class BufferStatus {
+    WAIT, READY, WRITTING, DONE
+};
 
 class MLDelegate {
 public:
@@ -15,12 +20,15 @@ public:
     ~MLDelegate();
 
     void setup(const char* model, size_t modelSize);
-    void process(const unsigned char* array);
+    void setArray(const unsigned char* array);
 private:
     std::unique_ptr<Noon> ml;
     std::unique_ptr<float[]> tempBuffer;
 
     std::vector<std::unique_ptr<float[]>> outputs;
+    std::thread thread;
+    std::mutex mutex;
+    BufferStatus status = BufferStatus::DONE;
 
     // hardcoding
     int width = 630;
