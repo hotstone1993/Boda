@@ -11,7 +11,7 @@
 #include "Noon.h"
 
 enum class BufferStatus {
-    WAIT, READY, WRITTING, DONE, FINISH
+    WAIT, READY, FINISH
 };
 
 class MLDelegate {
@@ -28,7 +28,7 @@ private:
     std::vector<std::unique_ptr<float[]>> outputs;
     std::thread thread;
     std::mutex mutex;
-    BufferStatus status = BufferStatus::DONE;
+    BufferStatus status = BufferStatus::WAIT;
 
     // hardcoding
     int width = 630;

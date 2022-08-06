@@ -4,24 +4,23 @@
 
 #include "include/MLDelegate.h"
 
-
 MLDelegate::MLDelegate(): ml(std::make_unique<Noon>()),
                             thread(std::thread([&]() {
                                 while (true) {
-                                    if (status != BufferStatus::READY) {
+                                    if (BufferStatus::WAIT == status) {
                                         continue;
-                                    }
-                                    if (status == BufferStatus::FINISH) {
+                                    } else if (BufferStatus::FINISH == status) {
                                         break;
                                     }
-                                    const std::lock_guard<std::mutex> lock(mutex);
-                                    status = BufferStatus::WRITTING;
-                                    ml->inference(tempBuffer.get());
 
+                                    {
+                                        const std::lock_guard<std::mutex> lock(mutex);
+                                        ml->inference(tempBuffer.get());
+                                    }
                                     for (int idx = 0; idx < outputs.size(); ++idx) {
                                         ml->getOutput(idx, outputs[idx].get());
                                     }
-                                    status = BufferStatus::DONE;
+                                    status = BufferStatus::WAIT;
                                 }
                             })) {
 }
@@ -50,16 +49,16 @@ void MLDelegate::setup(const char* model, size_t modelSize) {
     for (int idx = 0; idx < ml->getOutputArraySize(); ++idx) {
         outputs.emplace_back(std::make_unique<float[]>(ml->getOutputBufferSize(idx)));
     }
+    status = BufferStatus::READY;
 }
 
 void MLDelegate::setArray(const unsigned char* array) {
-    if (status != BufferStatus::DONE) {
+    if (!mutex.try_lock())
         return;
-    }
-    status = BufferStatus::WAIT;
     for (size_t idx = 0; idx < pixelStride * height * width; ++idx) {
         tempBuffer[idx] = (array[idx] / 256.f) - 0.5f;
     }
     status = BufferStatus::READY;
+    mutex.unlock();
 }
 
