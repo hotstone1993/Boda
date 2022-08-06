@@ -11,7 +11,7 @@
 #include "Noon.h"
 
 enum class BufferStatus {
-    WAIT, READY, WRITTING, DONE
+    WAIT, READY, WRITTING, DONE, FINISH
 };
 
 class MLDelegate {

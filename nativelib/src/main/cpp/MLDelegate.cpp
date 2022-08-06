@@ -11,6 +11,9 @@ MLDelegate::MLDelegate(): ml(std::make_unique<Noon>()),
                                     if (status != BufferStatus::READY) {
                                         continue;
                                     }
+                                    if (status == BufferStatus::FINISH) {
+                                        break;
+                                    }
                                     const std::lock_guard<std::mutex> lock(mutex);
                                     status = BufferStatus::WRITTING;
                                     ml->inference(tempBuffer.get());
@@ -25,6 +28,8 @@ MLDelegate::MLDelegate(): ml(std::make_unique<Noon>()),
 
 MLDelegate::~MLDelegate() {
     ml->deinit();
+    status = BufferStatus::FINISH;
+    thread.join();
 }
 
 void MLDelegate::setup(const char* model, size_t modelSize) {
