@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <thread>
+#include <condition_variable>
 
 #include "Noon.h"
 
@@ -28,6 +29,7 @@ private:
     std::vector<std::unique_ptr<float[]>> outputs;
     std::thread thread;
     std::mutex mutex;
+    std::condition_variable cv;
     BufferStatus status = BufferStatus::WAIT;
 
     // hardcoding

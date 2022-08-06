@@ -7,14 +7,13 @@
 MLDelegate::MLDelegate(): ml(std::make_unique<Noon>()),
                             thread(std::thread([&]() {
                                 while (true) {
-                                    if (BufferStatus::WAIT == status) {
-                                        continue;
-                                    } else if (BufferStatus::FINISH == status) {
+                                    if (BufferStatus::FINISH == status) {
                                         break;
                                     }
 
                                     {
-                                        const std::lock_guard<std::mutex> lock(mutex);
+                                        std::unique_lock<std::mutex> lk(mutex);
+                                        cv.wait(lk, [&]() { return BufferStatus::READY == status;});
                                         ml->inference(tempBuffer.get());
                                     }
                                     for (int idx = 0; idx < outputs.size(); ++idx) {
@@ -28,6 +27,7 @@ MLDelegate::MLDelegate(): ml(std::make_unique<Noon>()),
 MLDelegate::~MLDelegate() {
     ml->deinit();
     status = BufferStatus::FINISH;
+    cv.notify_all();
     thread.join();
 }
 
@@ -49,7 +49,6 @@ void MLDelegate::setup(const char* model, size_t modelSize) {
     for (int idx = 0; idx < ml->getOutputArraySize(); ++idx) {
         outputs.emplace_back(std::make_unique<float[]>(ml->getOutputBufferSize(idx)));
     }
-    status = BufferStatus::READY;
 }
 
 void MLDelegate::setArray(const unsigned char* array) {
@@ -60,5 +59,6 @@ void MLDelegate::setArray(const unsigned char* array) {
     }
     status = BufferStatus::READY;
     mutex.unlock();
+    cv.notify_one();
 }
 
