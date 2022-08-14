@@ -9,7 +9,7 @@ add_library(${PROJECT_NAME}
              MainScene.cpp
              Matrix.cpp
              MLDelegate.cpp
-             object/PlaneObject.cpp
+        object/PlaneObject.cpp
              object/BoxObject.cpp)
 
 set( PROJECT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../../ )
