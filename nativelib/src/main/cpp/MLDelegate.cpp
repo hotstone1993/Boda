@@ -47,7 +47,8 @@ void MLDelegate::setup(const char* model, size_t modelSize) {
     tempBuffer = std::make_unique<float[]>(width * height * pixelStride);
 
     for (int idx = 0; idx < ml->getOutputArraySize(); ++idx) {
-        outputs.emplace_back(std::make_unique<float[]>(ml->getOutputBufferSize(idx)));
+        size_t size = ml->getOutputBufferSize(idx);
+        outputs.emplace_back(std::make_unique<float[]>(size));
     }
 }
 
@@ -62,3 +63,6 @@ void MLDelegate::setArray(const unsigned char* array) {
     cv.notify_one();
 }
 
+void* MLDelegate::getOutput() const {
+    return outputs[1].get();
+}

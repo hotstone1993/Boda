@@ -17,6 +17,7 @@ PlaneObject::PlaneObject(): indices {0, 2, 3, 0, 1, 3},
                                     1.0f, 0.0f,
                                     0.0f, 1.0f,
                                     1.0f, 1.0f,} {
+    objectType = ObjectType::PLANE;
 }
 
 PlaneObject::~PlaneObject() {
@@ -86,7 +87,7 @@ void PlaneObject::setupGraphic(int width, int height) {
     matrixTranslate(modelViewMatrix, 0.0f, 0.0f, -100.0f);
 }
 
-void PlaneObject::renderFrame(unsigned char* array) {
+void PlaneObject::renderFrame(void* array) {
     glUseProgram(program);
     glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
     glEnableVertexAttribArray(vertexLocation);
@@ -96,7 +97,7 @@ void PlaneObject::renderFrame(unsigned char* array) {
     glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, projectionMatrix);
     glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, modelViewMatrix);
 
-    GLuint id = loadSimpleTexture(array);
+    GLuint id = loadSimpleTexture(reinterpret_cast<unsigned char*>(array));
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
 

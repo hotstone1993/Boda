@@ -15,7 +15,7 @@ public:
 
     virtual void setupGraphic(int width, int height) override;
 
-    virtual void renderFrame(unsigned char *array = nullptr) override;
+    virtual void renderFrame(void* array = nullptr) override;
 
 private:
     float angle = 0;

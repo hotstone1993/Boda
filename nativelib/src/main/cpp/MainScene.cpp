@@ -36,6 +36,11 @@ void MainScene::renderFrame(unsigned char* image) {
     mlDelegate.setArray(image);
 
     for (const std::unique_ptr<BaseObject>& object: objects) {
-        object->renderFrame(image);
+        ObjectType type = object->getType();
+        if (type == ObjectType::BOX) {
+            object->renderFrame(mlDelegate.getOutput());
+        } else if (type == ObjectType::PLANE) {
+            object->renderFrame(image);
+        }
     }
 }

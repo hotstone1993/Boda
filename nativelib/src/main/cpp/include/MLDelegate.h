@@ -22,6 +22,8 @@ public:
 
     void setup(const char* model, size_t modelSize);
     void setArray(const unsigned char* array);
+
+    void* getOutput() const;
 private:
     std::unique_ptr<Noon> ml;
     std::unique_ptr<float[]> tempBuffer;

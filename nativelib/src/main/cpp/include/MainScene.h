@@ -17,7 +17,6 @@ public:
 
     bool setupGraphic(int width, int height, const char* model, size_t modelSize);
     void renderFrame(unsigned char* image);
-
 private:
     std::list<std::unique_ptr<BaseObject>> objects;
     MLDelegate mlDelegate;

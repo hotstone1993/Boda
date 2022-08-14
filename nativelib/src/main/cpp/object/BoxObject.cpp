@@ -6,6 +6,7 @@
 #include "GLUtils.h"
 
 BoxObject::BoxObject() {
+    objectType = ObjectType::BOX;
 }
 
 BoxObject::~BoxObject() {
@@ -67,7 +68,7 @@ void BoxObject::setupGraphic(int width, int height) {
     }
 }
 
-void BoxObject::renderFrame(unsigned char* array) {
+void BoxObject::renderFrame(void* array) {
     glUseProgram(program);
 
     matrixIdentityFunction(modelViewMatrix);

@@ -8,10 +8,6 @@
 #include "BoxObject.h"
 #include "PlaneObject.h"
 
-enum class ObjectType {
-    BOX, PLANE
-};
-
 class ObjectFactory {
 public:
     static std::unique_ptr<BaseObject> createObject(const ObjectType& type) {
