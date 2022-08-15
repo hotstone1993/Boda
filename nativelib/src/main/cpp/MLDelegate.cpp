@@ -3,6 +3,7 @@
 //
 
 #include "include/MLDelegate.h"
+#include "include/GLUtils.h"
 
 MLDelegate::MLDelegate(): ml(std::make_unique<Noon>()),
                             thread(std::thread([&]() {
@@ -41,18 +42,27 @@ void MLDelegate::setup(const char* model, size_t modelSize) {
     mlInfo.numThread = 4;
     mlInfo.delegateType = false;
 
-    ml->loadModel(model, modelSize, TENSORFLOW_LITE, mlInfo);
-    ml->setup(info);
+    try{
+        tempBuffer = std::make_unique<float[]>(width * height * pixelStride);
 
-    tempBuffer = std::make_unique<float[]>(width * height * pixelStride);
+        ml->loadModel(model, modelSize, TENSORFLOW_LITE, mlInfo);
+        ml->setup(info);
 
-    for (int idx = 0; idx < ml->getOutputArraySize(); ++idx) {
-        size_t size = ml->getOutputBufferSize(idx);
-        outputs.emplace_back(std::make_unique<float[]>(size));
+
+        for (int idx = 0; idx < ml->getOutputArraySize(); ++idx) {
+            size_t size = ml->getOutputBufferSize(idx);
+            outputs.emplace_back(std::make_unique<float[]>(size));
+        }
+    } catch (const std::bad_alloc& e) {
+        LOGE("%s", e.what());
+        ml->deinit();
+        return;
     }
 }
 
 void MLDelegate::setArray(const unsigned char* array) {
+    if (tempBuffer == nullptr)
+        return;
     if (!mutex.try_lock())
         return;
     for (size_t idx = 0; idx < pixelStride * height * width; ++idx) {
@@ -64,5 +74,7 @@ void MLDelegate::setArray(const unsigned char* array) {
 }
 
 void* MLDelegate::getOutput() const {
-    return outputs[1].get();
+    if (outputs.size() > 1)
+        return outputs[1].get();
+    return nullptr;
 }
