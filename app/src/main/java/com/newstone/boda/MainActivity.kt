@@ -24,6 +24,7 @@ import java.util.concurrent.Executors
 class MainActivity : AppCompatActivity() {
 
     private val MODEL_PATH = "face_detection_short_range.tflite"
+    private val OBJ_PATH = "face.obj"
     lateinit var binding: ActivityMainBinding
     private lateinit var cameraExecutor: ExecutorService
     private val executor = Executors.newSingleThreadExecutor()
@@ -54,10 +55,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.glSurfaceView.apply {
-            val model = getModel(resources.assets)
+            val model = getModel(resources.assets, MODEL_PATH)
+            val obj = getModel(resources.assets, OBJ_PATH)
             setEGLContextFactory(ContextFactory())
             setEGLConfigChooser(ConfigChooser())
-            setRenderer(CameraRenderer(input, listener, model))
+            setRenderer(CameraRenderer(input, listener, model, obj))
         }
     }
 
@@ -126,8 +128,8 @@ class MainActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun getModel(assetManager: AssetManager): ByteArray {
-        return assetManager.open(MODEL_PATH).readBytes()
+    private fun getModel(assetManager: AssetManager, path: String): ByteArray {
+        return assetManager.open(path).readBytes()
     }
 
     companion object {

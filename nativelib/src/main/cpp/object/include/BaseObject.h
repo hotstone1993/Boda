@@ -10,9 +10,19 @@ enum class ObjectType {
     UNKNOWN, BOX, PLANE
 };
 
+struct Position {
+    float data[3];
+    Position() = default;
+    Position(float x, float y, float z) {
+        data[0] = x;
+        data[1] = y;
+        data[2] = z;
+    }
+};
+
 class BaseObject {
 public:
-    virtual void setupGraphic(int width, int height) = 0;
+    virtual void setupGraphic(int width, int height, const char* obj = nullptr) = 0;
     virtual void renderFrame(void* array = nullptr) = 0;
 
     ObjectType getType() const {

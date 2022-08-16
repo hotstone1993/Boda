@@ -9,8 +9,9 @@ add_library(${PROJECT_NAME}
              MainScene.cpp
              Matrix.cpp
              MLDelegate.cpp
-        object/PlaneObject.cpp
-             object/BoxObject.cpp)
+             object/PlaneObject.cpp
+             object/BoxObject.cpp
+             object/ObjectFileLoader.cpp )
 
 set( PROJECT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../../ )
 set( THIRD_PARTY_PATH  ${PROJECT_ROOT_PATH}/thirdparty )

@@ -7,6 +7,7 @@
 
 BoxObject::BoxObject() {
     objectType = ObjectType::BOX;
+    loader = std::make_unique<ObjectFileLoader>();
 }
 
 BoxObject::~BoxObject() {
@@ -15,7 +16,7 @@ BoxObject::~BoxObject() {
     }
 }
 
-void BoxObject::setupGraphic(int width, int height) {
+void BoxObject::setupGraphic(int width, int height, const char* obj) {
     program = glCreateProgram();
 
     GLuint vertexShader = BODA::loadShader(GL_VERTEX_SHADER, glVertexShader);
@@ -57,7 +58,6 @@ void BoxObject::setupGraphic(int width, int height) {
     }
 
     vertexLocation = glGetAttribLocation(program, "vertexPosition");
-    colorLocation = glGetAttribLocation(program, "vertexColour");
     projectionLocation = glGetUniformLocation(program, "projection");
     modelViewLocation = glGetUniformLocation(program, "modelView");
 
@@ -66,6 +66,8 @@ void BoxObject::setupGraphic(int width, int height) {
     } else {
         matrixPerspective(projectionMatrix, 45, (float)height / (float)width, 0.1f, 100);
     }
+
+    loader->loadFile(obj, positions);
 }
 
 void BoxObject::renderFrame(void* array) {
@@ -76,17 +78,15 @@ void BoxObject::renderFrame(void* array) {
     matrixRotateX(modelViewMatrix, angle);
     matrixRotateY(modelViewMatrix, angle);
 
-    matrixTranslate(modelViewMatrix, 0.0f, 0.0f, -10.0f);
+    matrixTranslate(modelViewMatrix, 0.0f, 0.0f, -50.0f);
 
-    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, positions.data());
     glEnableVertexAttribArray(vertexLocation);
-    glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, 0, verticesColor);
-    glEnableVertexAttribArray(colorLocation);
 
     glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, projectionMatrix);
     glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, modelViewMatrix);
 
-    glDrawElements(GL_LINE_LOOP, 36, GL_UNSIGNED_SHORT, indices);
+    glDrawArrays(GL_TRIANGLES, 0, positions.size());
 
     angle += 1;
     if (angle > 360)
