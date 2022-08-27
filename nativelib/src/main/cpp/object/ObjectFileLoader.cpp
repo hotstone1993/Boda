@@ -4,9 +4,10 @@
 
 #include "include/ObjectFileLoader.h"
 #include <charconv>
+#include <fstream>
+#include <sstream>
 
 ObjectFileLoader::ObjectFileLoader() {
-
 }
 
 ObjectFileLoader::~ObjectFileLoader() {
@@ -31,6 +32,24 @@ void getPosition(std::string_view sv, Position& p) {
     }
 }
 
+void getIndices(std::string_view sv, Index& d) {
+    unsigned int save = 0;
+    int count = 0;
+
+    for (unsigned int idx = 0; idx < sv.size(); ++idx ) {
+        if (sv[idx] == ' ') {
+            if (save != 0) {
+                d.data[count++] = std::atoi(sv.data() + save);
+            }
+            save = idx + 1;
+        }
+        else if (sv[idx] == '\n') {
+            d.data[count++] = std::atoi(sv.data() + save);
+            break;
+        }
+    }
+}
+
 std::string_view getNewLine(std::string_view sv) {
     for (unsigned int idx = 0; idx < sv.size(); ++idx ) {
         if (sv[idx] == '\n') {
@@ -40,25 +59,36 @@ std::string_view getNewLine(std::string_view sv) {
     return sv.substr();
 }
 
-bool ObjectFileLoader::loadFile(std::string_view sv, std::vector<Position>& positions) {
-    std::string_view s = sv;
-    Position p;
+void loadMesh(Mesh& mesh, std::ifstream& read) {
+    read.read((char*)mesh.local, sizeof(float) * 16);
+    unsigned int indexSize = 0;
+    unsigned int positionSize = 0;
+    unsigned int childrenSize = 0;
+    read.read((char*)&indexSize, sizeof(unsigned int));
+    mesh.indices.resize(indexSize);
+    if (indexSize > 0) {
+        read.read((char*)mesh.indices.data(), sizeof(float) * indexSize * 3);
+    }
 
-    if (sv.empty())
-        return false;
-    while (true) {
-        s = getNewLine(s);
+    read.read((char*)&positionSize, sizeof(unsigned int));
+    mesh.positions.resize(positionSize);
+    if (positionSize > 0) {
+        read.read((char*)mesh.positions.data(), sizeof(float) * positionSize * 3);
+    }
 
-        if (s.empty())
-            break;
+    read.read((char*)&childrenSize, sizeof(unsigned int));
+    for (unsigned int idx = 0; idx < childrenSize; ++idx) {
+        mesh.children.emplace_back();
+        loadMesh(mesh.children.back(), read);
+    }
+}
 
-        switch (s.front()) {
-            case 'v': {
-                getPosition(s, p);
-                positions.emplace_back(p.data[0], p.data[1], p.data[2]);
-                break;
-            }
-        }
+bool ObjectFileLoader::loadFile(std::string_view path, Mesh& mesh) {
+    std::ifstream read(path, std::ifstream::binary);
+
+    if (read.is_open()) {
+        loadMesh(mesh, read);
+        read.close();
     }
     return true;
 }

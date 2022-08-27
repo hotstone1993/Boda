@@ -17,11 +17,11 @@ MainScene::MainScene() {
 MainScene::~MainScene() {
 }
 
-bool MainScene::setupGraphic(int width, int height, const char* model, size_t modelSize, const char* obj) {
+bool MainScene::setupGraphic(int width, int height, const char* model, size_t modelSize) {
     mlDelegate.setup(model, modelSize);
 
     for (const std::unique_ptr<BaseObject>& object: objects) {
-        object->setupGraphic(width, height, obj);
+        object->setupGraphic(width, height);
     }
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);

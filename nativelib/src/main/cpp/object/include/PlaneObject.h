@@ -12,7 +12,7 @@ public:
     PlaneObject();
     ~PlaneObject();
 
-    virtual void setupGraphic(int width, int height, const char* obj = nullptr) override;
+    virtual void setupGraphic(int width, int height) override;
     virtual void renderFrame(void* array) override;
 private:
     unsigned int loadSimpleTexture(unsigned char* array);

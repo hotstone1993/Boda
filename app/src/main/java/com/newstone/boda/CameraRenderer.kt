@@ -6,7 +6,7 @@ import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class CameraRenderer(val pixels: ByteArray, var listener: FPSEventListener, val model: ByteArray, val obj: ByteArray): GLSurfaceView.Renderer {
+class CameraRenderer(val pixels: ByteArray, var listener: FPSEventListener, val model: ByteArray): GLSurfaceView.Renderer {
     val timer = Timer()
     var count = 0L
     val timerTask = object: TimerTask() {
@@ -20,7 +20,7 @@ class CameraRenderer(val pixels: ByteArray, var listener: FPSEventListener, val 
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        NativeLib.init(width, height, model, obj)
+        NativeLib.init(width, height, model)
         timer.schedule(timerTask, 0, 1000)
     }
 

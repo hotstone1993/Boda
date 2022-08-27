@@ -14,21 +14,23 @@ public:
 
     ~BoxObject();
 
-    virtual void setupGraphic(int width, int height, const char* obj = nullptr) override;
+    virtual void setupGraphic(int width, int height) override;
 
     virtual void renderFrame(void* array = nullptr) override;
 
 private:
+    void drawMesh(const Mesh& mesh);
+
     float angle = 0;
     std::unique_ptr<BaseLoader> loader;
 
     unsigned int vertexLocation;
     unsigned int projectionLocation;
-    unsigned int modelViewLocation;
+    unsigned int localLocation;
+    unsigned int worldViewLocation;
 
     float projectionMatrix[16];
-    float modelViewMatrix[16];
-    std::vector<Position> positions;
+    Mesh root;
 
     const char *glVertexShader =
             "attribute vec4 vertexPosition;\n"

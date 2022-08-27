@@ -16,7 +16,7 @@ BoxObject::~BoxObject() {
     }
 }
 
-void BoxObject::setupGraphic(int width, int height, const char* obj) {
+void BoxObject::setupGraphic(int width, int height) {
     program = glCreateProgram();
 
     GLuint vertexShader = BODA::loadShader(GL_VERTEX_SHADER, glVertexShader);
@@ -59,7 +59,7 @@ void BoxObject::setupGraphic(int width, int height, const char* obj) {
 
     vertexLocation = glGetAttribLocation(program, "vertexPosition");
     projectionLocation = glGetUniformLocation(program, "projection");
-    modelViewLocation = glGetUniformLocation(program, "modelView");
+    localLocation = glGetUniformLocation(program, "modelView");
 
     if (width < height) {
         matrixPerspective(projectionMatrix, 45, (float)width / (float)height, 0.1f, 100);
@@ -67,30 +67,40 @@ void BoxObject::setupGraphic(int width, int height, const char* obj) {
         matrixPerspective(projectionMatrix, 45, (float)height / (float)width, 0.1f, 100);
     }
 
-    loader->loadFile(obj, positions);
+    loader->loadFile("/sdcard/Download/Dragon_Baked_Actions_fbx_6.1_ASCII.fbx.bss", root);
 }
 
 void BoxObject::renderFrame(void* array) {
     glUseProgram(program);
 
-    matrixIdentityFunction(modelViewMatrix);
+    drawMesh(root);
+}
 
-    matrixRotateX(modelViewMatrix, angle);
-    matrixRotateY(modelViewMatrix, angle);
 
-    matrixTranslate(modelViewMatrix, 0.0f, 0.0f, -50.0f);
+void BoxObject::drawMesh(const Mesh& mesh) {
+    float resultLocalMatrix[16];
+    memcpy(resultLocalMatrix, mesh.local, sizeof(float) * 16);
+    float scaleFactor = 0.1f;
+    matrixScale(resultLocalMatrix, scaleFactor, scaleFactor, scaleFactor);
+    matrixRotateX(resultLocalMatrix, angle);
+    matrixRotateY(resultLocalMatrix, angle);
 
-    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, positions.data());
+    matrixTranslate(resultLocalMatrix, 0.0f, 0.0f, -40.0f);
+
+    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, mesh.positions.data());
     glEnableVertexAttribArray(vertexLocation);
 
     glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, projectionMatrix);
-    glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, modelViewMatrix);
+    glUniformMatrix4fv(localLocation, 1, GL_FALSE, resultLocalMatrix);
 
-    glDrawArrays(GL_TRIANGLES, 0, positions.size());
+    glDrawElements(GL_TRIANGLES, mesh.indices.size() * 3, GL_UNSIGNED_INT, mesh.indices.data());
 
-    angle += 1;
-    if (angle > 360)
-    {
+    angle += 0.01;
+    if (angle > 360) {
         angle -= 360;
+    }
+
+    for (const Mesh& child: mesh.children) {
+        drawMesh(child);
     }
 }
