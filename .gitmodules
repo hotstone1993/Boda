@@ -1,3 +1,6 @@
 [submodule "thirdparty/Noon"]
 	path = thirdparty/Noon
 	url = https://github.com/hotstone1993/Noon
+[submodule "thirdparty/glm"]
+	path = thirdparty/glm
+	url = https://github.com/g-truc/glm.git

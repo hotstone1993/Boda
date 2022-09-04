@@ -27,7 +27,6 @@ private:
     unsigned int vertexLocation;
     unsigned int projectionLocation;
     unsigned int localLocation;
-    unsigned int worldViewLocation;
 
     float projectionMatrix[16];
     Mesh root;

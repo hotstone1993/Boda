@@ -27,6 +27,7 @@ set( THIRDPARTY_LIBRARY
 target_include_directories(${PROJECT_NAME} PUBLIC
                             ${CMAKE_CURRENT_SOURCE_DIR}/include
                             ${CMAKE_CURRENT_SOURCE_DIR}/object/include
+                            ${THIRD_PARTY_PATH}/glm/
                             ${THIRD_PARTY_PATH}/Noon/src/include
                             ${THIRD_PARTY_PATH}/Noon/src/include/flatbuffers
                             ${THIRD_PARTY_PATH}/Noon/thirdparty/tensorflow)

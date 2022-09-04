@@ -6,6 +6,7 @@
 #define BODA_BASEOBJECT_H
 
 #include <vector>
+#include "glm/glm.hpp"
 
 enum class ObjectType {
     UNKNOWN, BOX, PLANE
