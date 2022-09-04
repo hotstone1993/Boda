@@ -24,11 +24,11 @@ private:
     float angle = 0;
     std::unique_ptr<BaseLoader> loader;
 
-    unsigned int vertexLocation;
-    unsigned int projectionLocation;
-    unsigned int localLocation;
+    unsigned int vertexLocation{};
+    unsigned int projectionLocation{};
+    unsigned int localLocation{};
 
-    float projectionMatrix[16];
+    glm::mat4 projectionMatrix{};
     Mesh root;
 
     const char *glVertexShader =

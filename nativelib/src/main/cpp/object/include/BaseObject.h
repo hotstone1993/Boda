@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "glm/glm.hpp"
+#include "glm/ext.hpp"
 
 enum class ObjectType {
     UNKNOWN, BOX, PLANE
@@ -33,7 +34,7 @@ struct Index {
 };
 
 struct Mesh {
-    float local[16] = {0};
+    glm::mat4 local;
     std::vector<Position> positions;
     std::vector<Index> indices;
     std::vector<Mesh> children;

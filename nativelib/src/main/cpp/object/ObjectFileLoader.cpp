@@ -60,7 +60,7 @@ std::string_view getNewLine(std::string_view sv) {
 }
 
 void loadMesh(Mesh& mesh, std::ifstream& read) {
-    read.read((char*)mesh.local, sizeof(float) * 16);
+    read.read((char*)glm::value_ptr(mesh.local), sizeof(float) * 16);
     unsigned int indexSize = 0;
     unsigned int positionSize = 0;
     unsigned int childrenSize = 0;
