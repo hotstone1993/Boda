@@ -4,7 +4,6 @@
 
 #include "PlaneObject.h"
 #include "GLUtils.h"
-#include "Matrix.h"
 
 PlaneObject::PlaneObject(): indices {0, 2, 3, 0, 1, 3},
                             vertices {
@@ -78,13 +77,12 @@ void PlaneObject::setupGraphic(int width, int height) {
     modelViewLocation = glGetUniformLocation(program, "modelView");
 
     if (width < height) {
-        matrixPerspective(projectionMatrix, 45, (float)width / (float)height, 0.1f, 110);
+        projectionMatrix = glm::perspectiveFov<float>(45, width, height, 0.1f, 110);
     } else {
-        matrixPerspective(projectionMatrix, 45, (float)height / (float)width, 0.1f, 110);
+        projectionMatrix = glm::perspectiveFov<float>(45, height, width, 0.1f, 110);
     }
-    matrixIdentityFunction(modelViewMatrix);
-    matrixScale(modelViewMatrix, 48.f / (height / width * 2), 64 / (height / width * 2), 1);
-    matrixTranslate(modelViewMatrix, 0.0f, 0.0f, -100.0f);
+    modelViewMatrix = glm::scale(modelViewMatrix, glm::vec3(48.f / (height / width * 2.f), 64 / (height / width * 2.f), 1));
+    modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0f, 0.0f, -100.0f));
 }
 
 void PlaneObject::renderFrame(void* array) {
@@ -94,8 +92,8 @@ void PlaneObject::renderFrame(void* array) {
     glVertexAttribPointer(textureCoordinateLocation, 2, GL_FLOAT, GL_FALSE, 0, textureCoordinates);
     glEnableVertexAttribArray(textureCoordinateLocation);
 
-    glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, projectionMatrix);
-    glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, modelViewMatrix);
+    glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+    glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
 
     GLuint id = loadSimpleTexture(reinterpret_cast<unsigned char*>(array));
 

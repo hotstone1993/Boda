@@ -23,8 +23,8 @@ private:
     unsigned int projectionLocation;
     unsigned int modelViewLocation;
 
-    float projectionMatrix[16];
-    float modelViewMatrix[16];
+    glm::mat4 projectionMatrix{1};
+    glm::mat4 modelViewMatrix{1};
     unsigned short indices[6];
     float vertices[12];
     float textureCoordinates[8];
