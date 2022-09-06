@@ -102,6 +102,56 @@ bool FBXParser::getVertex(FbxNode* node, Mesh& m)
         for (unsigned int idx = 0; idx < count; ++idx) {
             m.positions.emplace_back(mesh->GetControlPointAt(idx).mData[0], mesh->GetControlPointAt(idx).mData[1], mesh->GetControlPointAt(idx).mData[2]);
         }
+        FbxGeometryElementNormal* normalElement = mesh->GetElementNormal();
+        if (normalElement != nullptr) {
+            if (normalElement->GetMappingMode() == FbxGeometryElement::eByControlPoint) {
+                for (int idx = 0; idx < mesh->GetControlPointsCount(); idx++)
+                {
+                    int normalIndex = 0;
+                    //reference mode is direct, the normal index is same as vertex index.
+                    //get normals by the index of control vertex
+                    if (normalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+                        normalIndex = idx;
+
+                    //reference mode is index-to-direct, get normals by the index-to-direct
+                    if (normalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+                        normalIndex = normalElement->GetIndexArray().GetAt(idx);
+
+                    //Got normals of each vertex.
+                    FbxVector4 normal = normalElement->GetDirectArray().GetAt(normalIndex);
+                    m.normals.emplace_back(normal[0], normal[1], normal[2]);
+                }
+            }
+            else if (normalElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex) {
+                int lIndexByPolygonVertex = 0;
+                //Let's get normals of each polygon, since the mapping mode of normal element is by polygon-vertex.
+                for (int lPolygonIndex = 0; lPolygonIndex < mesh->GetPolygonCount(); lPolygonIndex++)
+                {
+                    //get polygon size, you know how many vertices in current polygon.
+                    int lPolygonSize = mesh->GetPolygonSize(lPolygonIndex);
+                    //retrieve each vertex of current polygon.
+                    for (int i = 0; i < lPolygonSize; i++)
+                    {
+                        int lNormalIndex = 0;
+                        //reference mode is direct, the normal index is same as lIndexByPolygonVertex.
+                        if (normalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+                            lNormalIndex = lIndexByPolygonVertex;
+
+                        //reference mode is index-to-direct, get normals by the index-to-direct
+                        if (normalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+                            lNormalIndex = normalElement->GetIndexArray().GetAt(lIndexByPolygonVertex);
+
+                        //Got normals of each polygon-vertex.
+                        FbxVector4 normal = normalElement->GetDirectArray().GetAt(lNormalIndex);
+                        m.normals.emplace_back(normal[0], normal[1], normal[2]);
+                        //add your custom code here, to output normals or get them into a list, such as KArrayTemplate<FbxVector4>
+                        //. . .
+                        lIndexByPolygonVertex++;
+                    }//end for i //lPolygonSize
+                }//end for lPolygonIndex //PolygonCount
+            }
+        }
+
         unsigned int triMeshCount = mesh->GetPolygonCount();
         INDEX idx;
         for (unsigned int i = 0; i < triMeshCount; ++i) // 삼각형의 개수
