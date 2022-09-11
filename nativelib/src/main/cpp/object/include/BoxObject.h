@@ -25,6 +25,7 @@ private:
     std::unique_ptr<BaseLoader> loader;
 
     unsigned int vertexLocation{};
+    unsigned int normalLocation{};
     unsigned int projectionLocation{};
     unsigned int localLocation{};
 
@@ -33,18 +34,22 @@ private:
 
     const char *glVertexShader =
             "attribute vec4 vertexPosition;\n"
+            "attribute vec3 vertexNormal;\n"
+            "varying vec3 fragColour;\n"
             "uniform mat4 projection;\n"
             "uniform mat4 modelView;\n"
             "void main()\n"
             "{\n"
+            "    fragColour = normalize((modelView * vec4(vertexNormal, 0.0)).xyz);\n"
             "    gl_Position = projection * modelView * vertexPosition;\n"
             "}\n";
 
     const char *glFragmentShader =
             "precision mediump float;\n"
+            "varying vec3 fragColour;\n"
             "void main()\n"
             "{\n"
-            "    gl_FragColor = vec4(0.3, 0.3, 0.3, 1.0);\n"
+            "    gl_FragColor = vec4(fragColour, 1.0);\n"
             "}\n";
 };
 
