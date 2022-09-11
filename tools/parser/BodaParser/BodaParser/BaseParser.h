@@ -50,13 +50,24 @@ public:
         write.write((char*)&m.mat, sizeof(float) * 16);
         unsigned int idxCount = m.indices.size();
         write.write((char*)&idxCount, sizeof(unsigned int));
-        if (idxCount > 0)
+        if (idxCount > 0) {
+            std::cout << "INDICES COUNT: " << idxCount << std::endl;
             write.write((char*)m.indices.data(), sizeof(unsigned int) * idxCount * 3);
+        }
 
         unsigned int positionCount = m.positions.size();
         write.write((char*)&positionCount, sizeof(unsigned int));
-        if (positionCount > 0)
+        if (positionCount > 0) {
+            std::cout << "POSITION COUNT: " << positionCount << std::endl;
             write.write((char*)m.positions.data(), sizeof(float) * positionCount * 3);
+        }
+
+        unsigned int normalCount = m.normals.size();
+        write.write((char*)&normalCount, sizeof(unsigned int));
+        if (normalCount > 0) {
+            std::cout << "NORMAL COUNT: " << normalCount << std::endl;
+            write.write((char*)m.normals.data(), sizeof(float) * normalCount * 3);
+        }
 
         unsigned int childrenCount = m.children.size();
         write.write((char*)&childrenCount, sizeof(unsigned int));

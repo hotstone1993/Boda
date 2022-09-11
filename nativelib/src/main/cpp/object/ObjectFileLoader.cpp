@@ -50,19 +50,11 @@ void getIndices(std::string_view sv, Index& d) {
     }
 }
 
-std::string_view getNewLine(std::string_view sv) {
-    for (unsigned int idx = 0; idx < sv.size(); ++idx ) {
-        if (sv[idx] == '\n') {
-            return sv.substr(idx + 1, sv.size());
-        }
-    }
-    return sv.substr();
-}
-
 void loadMesh(Mesh& mesh, std::ifstream& read) {
     read.read((char*)glm::value_ptr(mesh.local), sizeof(float) * 16);
     unsigned int indexSize = 0;
     unsigned int positionSize = 0;
+    unsigned int normalSize = 0;
     unsigned int childrenSize = 0;
     read.read((char*)&indexSize, sizeof(unsigned int));
     mesh.indices.resize(indexSize);
@@ -74,6 +66,12 @@ void loadMesh(Mesh& mesh, std::ifstream& read) {
     mesh.positions.resize(positionSize);
     if (positionSize > 0) {
         read.read((char*)mesh.positions.data(), sizeof(float) * positionSize * 3);
+    }
+
+    read.read((char*)&normalSize, sizeof(unsigned int));
+    mesh.normals.resize(normalSize);
+    if (normalSize > 0) {
+        read.read((char*)mesh.normals.data(), sizeof(float) * normalSize * 3);
     }
 
     read.read((char*)&childrenSize, sizeof(unsigned int));

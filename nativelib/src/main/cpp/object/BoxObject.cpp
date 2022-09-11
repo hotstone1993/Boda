@@ -57,6 +57,7 @@ void BoxObject::setupGraphic(int width, int height) {
     }
 
     vertexLocation = glGetAttribLocation(program, "vertexPosition");
+    normalLocation = glGetAttribLocation(program, "vertexNormal");
     projectionLocation = glGetUniformLocation(program, "projection");
     localLocation = glGetUniformLocation(program, "modelView");
 
@@ -67,7 +68,7 @@ void BoxObject::setupGraphic(int width, int height) {
     }
 
 
-    loader->loadFile("/sdcard/Download/Dragon_Baked_Actions_fbx_6.1_ASCII.fbx.bss", root);
+    loader->loadFile("/sdcard/Download/dragon.bss", root);
 }
 
 void BoxObject::renderFrame(void* array) {
@@ -89,6 +90,8 @@ void BoxObject::drawMesh(const Mesh& mesh) {
 
     glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, mesh.positions.data());
     glEnableVertexAttribArray(vertexLocation);
+    glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, 0, mesh.normals.data());
+    glEnableVertexAttribArray(normalLocation);
 
     glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
     glUniformMatrix4fv(localLocation, 1, GL_FALSE, glm::value_ptr(resultLocalMatrix));
