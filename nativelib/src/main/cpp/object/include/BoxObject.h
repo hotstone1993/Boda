@@ -14,7 +14,7 @@ public:
 
     ~BoxObject();
 
-    virtual void setupGraphic(int width, int height) override;
+    virtual void setupGraphic(int width, int height, AAssetManager *mgr) override;
 
     virtual void renderFrame(void* array = nullptr) override;
 
@@ -31,26 +31,6 @@ private:
 
     glm::mat4 projectionMatrix{};
     Mesh root;
-
-    const char *glVertexShader =
-            "attribute vec4 vertexPosition;\n"
-            "attribute vec3 vertexNormal;\n"
-            "varying vec3 fragColour;\n"
-            "uniform mat4 projection;\n"
-            "uniform mat4 modelView;\n"
-            "void main()\n"
-            "{\n"
-            "    fragColour = normalize((modelView * vec4(vertexNormal, 0.0)).xyz);\n"
-            "    gl_Position = projection * modelView * vertexPosition;\n"
-            "}\n";
-
-    const char *glFragmentShader =
-            "precision mediump float;\n"
-            "varying vec3 fragColour;\n"
-            "void main()\n"
-            "{\n"
-            "    gl_FragColor = vec4(fragColour, 1.0);\n"
-            "}\n";
 };
 
 

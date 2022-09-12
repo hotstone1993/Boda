@@ -15,7 +15,7 @@ public:
     MainScene();
     ~MainScene();
 
-    bool setupGraphic(int width, int height, const char* model, size_t modelSize);
+    bool setupGraphic(int width, int height, AAssetManager *mgr);
     void renderFrame(unsigned char* image);
 private:
     std::list<std::unique_ptr<BaseObject>> objects;

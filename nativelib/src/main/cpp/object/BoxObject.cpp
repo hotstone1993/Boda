@@ -2,7 +2,6 @@
 // Created by newst on 2022-07-19.
 //
 #include "include/BoxObject.h"
-#include "GLUtils.h"
 
 BoxObject::BoxObject() {
     objectType = ObjectType::BOX;
@@ -15,20 +14,34 @@ BoxObject::~BoxObject() {
     }
 }
 
-void BoxObject::setupGraphic(int width, int height) {
+void BoxObject::setupGraphic(int width, int height, AAssetManager *mgr) {
     program = glCreateProgram();
+    size_t shaderSize = 0;
+    char* shader = nullptr;
 
-    GLuint vertexShader = BODA::loadShader(GL_VERTEX_SHADER, glVertexShader);
+    if (!BODA::getAsset(mgr, "shader/ObjectVertexShader.glsl", shaderSize, shader)) {
+        return;
+    }
+
+    GLuint vertexShader = BODA::loadShader(GL_VERTEX_SHADER, shader);
     if (vertexShader == 0)
     {
         return;
     }
+    delete shader;
+    shader = nullptr;
 
-    GLuint fragmentShader = BODA::loadShader(GL_FRAGMENT_SHADER, glFragmentShader);
+    if (!BODA::getAsset(mgr, "shader/ObjectFragmentShader.glsl", shaderSize, shader)) {
+        return;
+    }
+
+    GLuint fragmentShader = BODA::loadShader(GL_FRAGMENT_SHADER, shader);
     if (fragmentShader == 0)
     {
         return;
     }
+    delete shader;
+    shader = nullptr;
 
     if (program != 0)
     {

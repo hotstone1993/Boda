@@ -31,7 +31,7 @@ PlaneObject::~PlaneObject() {
     }
 }
 
-void PlaneObject::setupGraphic(int width, int height) {
+void PlaneObject::setupGraphic(int width, int height, AAssetManager *mgr) {
     program = glCreateProgram();
 
     vertexShader = BODA::loadShader(GL_VERTEX_SHADER, glVertexShader);

@@ -32,10 +32,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC
                             ${THIRD_PARTY_PATH}/Noon/thirdparty/tensorflow)
 
 find_library( log-lib
-                log )
+                log
+                android-lib
+                android)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
                         GLESv3
                         EGL
+                        android
                         ${log-lib}
+                        ${android-lib}
                         ${THIRDPARTY_LIBRARY})

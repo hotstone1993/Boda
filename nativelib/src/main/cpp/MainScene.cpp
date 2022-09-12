@@ -4,8 +4,6 @@
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#include <memory>
-
 #include "include/MainScene.h"
 #include "object/include/ObjectFactory.h"
 
@@ -17,11 +15,11 @@ MainScene::MainScene() {
 MainScene::~MainScene() {
 }
 
-bool MainScene::setupGraphic(int width, int height, const char* model, size_t modelSize) {
-    mlDelegate.setup(model, modelSize);
+bool MainScene::setupGraphic(int width, int height, AAssetManager *mgr) {
+    mlDelegate.setup(mgr);
 
     for (const std::unique_ptr<BaseObject>& object: objects) {
-        object->setupGraphic(width, height);
+        object->setupGraphic(width, height, mgr);
     }
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);

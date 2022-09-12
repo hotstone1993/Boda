@@ -6,6 +6,7 @@
 #define BODA_BASEOBJECT_H
 
 #include <vector>
+#include "GLUtils.h"
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 
@@ -53,7 +54,7 @@ struct Mesh {
 
 class BaseObject {
 public:
-    virtual void setupGraphic(int width, int height) = 0;
+    virtual void setupGraphic(int width, int height, AAssetManager *mgr) = 0;
     virtual void renderFrame(void* array = nullptr) = 0;
 
     ObjectType getType() const {
