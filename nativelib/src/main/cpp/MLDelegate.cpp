@@ -32,7 +32,7 @@ MLDelegate::~MLDelegate() {
     thread.join();
 }
 
-void MLDelegate::setup(const char* model, size_t modelSize) {
+void MLDelegate::setup(AAssetManager* mgr) {
     InferenceInfo info;
     info.type = IMAGE;
     info.input.shape = {width ,height, pixelStride};
@@ -41,6 +41,11 @@ void MLDelegate::setup(const char* model, size_t modelSize) {
     mlInfo.delegateType = GPU;
     mlInfo.numThread = 4;
     mlInfo.delegateType = false;
+
+    size_t modelSize = 0;
+    char* model = nullptr;
+    if (!BODA::getAsset(mgr, "face_detection_short_range.tflite", modelSize, model))
+        return;
 
     try{
         tempBuffer = std::make_unique<float[]>(width * height * pixelStride);

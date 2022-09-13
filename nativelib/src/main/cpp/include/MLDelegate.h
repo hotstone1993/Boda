@@ -15,12 +15,14 @@ enum class BufferStatus {
     WAIT, READY, FINISH
 };
 
+class AAssetManager;
+
 class MLDelegate {
 public:
     MLDelegate();
     ~MLDelegate();
 
-    void setup(const char* model, size_t modelSize);
+    void setup(AAssetManager *mgr);
     void setArray(const unsigned char* array);
 
     void* getOutput() const;

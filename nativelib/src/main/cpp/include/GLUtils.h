@@ -9,6 +9,7 @@
 #include <GLES2/gl2ext.h>
 #include <memory>
 #include <android/log.h>
+#include <android/asset_manager.h>
 
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "BODA", __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, "BODA", __VA_ARGS__)
@@ -36,6 +37,7 @@ namespace BODA {
                     {
                         glGetShaderInfoLog(shader, infoLen, nullptr, logBuffer.get());
                     }
+                    LOGE("Shader Error: %s", logBuffer.get());
 
                     glDeleteShader(shader);
                     shader = 0;
@@ -44,6 +46,25 @@ namespace BODA {
         }
 
         return shader;
+    }
+
+    inline bool getAsset(AAssetManager *mgr, const char* filePath, size_t& fileSize, char* (&file)) {
+        AAsset* asset = AAssetManager_open(mgr, filePath, AASSET_MODE_UNKNOWN);
+        if (asset == nullptr) {
+            return false;
+        }
+
+        fileSize = AAsset_getLength(asset);
+
+        if (fileSize == 0){
+            AAsset_close(asset);
+            return false;
+        }
+
+        file = new char[fileSize];
+        AAsset_read(asset, file, fileSize);
+
+        return true;
     }
 }
 

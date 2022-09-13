@@ -1,12 +1,13 @@
 package com.newstone.boda
 
+import android.content.res.AssetManager
 import android.opengl.GLSurfaceView
 import com.newstone.nativelib.NativeLib
 import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class CameraRenderer(val pixels: ByteArray, var listener: FPSEventListener, val model: ByteArray): GLSurfaceView.Renderer {
+class CameraRenderer(val pixels: ByteArray, var listener: FPSEventListener, val asset: AssetManager): GLSurfaceView.Renderer {
     val timer = Timer()
     var count = 0L
     val timerTask = object: TimerTask() {
@@ -20,7 +21,7 @@ class CameraRenderer(val pixels: ByteArray, var listener: FPSEventListener, val 
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        NativeLib.init(width, height, model)
+        NativeLib.init(width, height, asset)
         timer.schedule(timerTask, 0, 1000)
     }
 
