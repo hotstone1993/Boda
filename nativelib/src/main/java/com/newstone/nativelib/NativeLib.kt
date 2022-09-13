@@ -8,7 +8,7 @@ class NativeLib {
         @JvmStatic
         var nativeInstance: Long = 0L
         @JvmStatic
-        external fun init(width: Int, height: Int)
+        external fun init(width: Int, height: Int, model: ByteArray)
         @JvmStatic
         external fun step(input: ByteArray)
     }

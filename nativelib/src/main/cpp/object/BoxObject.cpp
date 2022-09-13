@@ -1,11 +1,12 @@
 //
 // Created by newst on 2022-07-19.
 //
-#include "Matrix.h"
 #include "include/BoxObject.h"
 #include "GLUtils.h"
 
 BoxObject::BoxObject() {
+    objectType = ObjectType::BOX;
+    loader = std::make_unique<ObjectFileLoader>();
 }
 
 BoxObject::~BoxObject() {
@@ -56,40 +57,48 @@ void BoxObject::setupGraphic(int width, int height) {
     }
 
     vertexLocation = glGetAttribLocation(program, "vertexPosition");
-    colorLocation = glGetAttribLocation(program, "vertexColour");
+    normalLocation = glGetAttribLocation(program, "vertexNormal");
     projectionLocation = glGetUniformLocation(program, "projection");
-    modelViewLocation = glGetUniformLocation(program, "modelView");
+    localLocation = glGetUniformLocation(program, "modelView");
 
     if (width < height) {
-        matrixPerspective(projectionMatrix, 45, (float)width / (float)height, 0.1f, 100);
+        projectionMatrix = glm::perspectiveFov<float>(45.f, width, height, 0.1f, 100);
     } else {
-        matrixPerspective(projectionMatrix, 45, (float)height / (float)width, 0.1f, 100);
+        projectionMatrix = glm::perspectiveFov<float>(45.f, height, width, 0.1f, 100);
     }
+
+
+    loader->loadFile("/sdcard/Download/dragon.bss", root);
 }
 
-void BoxObject::renderFrame(unsigned char* array) {
+void BoxObject::renderFrame(void* array) {
     glUseProgram(program);
 
-    matrixIdentityFunction(modelViewMatrix);
+    drawMesh(root);
+}
 
-    matrixRotateX(modelViewMatrix, angle);
-    matrixRotateY(modelViewMatrix, angle);
 
-    matrixTranslate(modelViewMatrix, 0.0f, 0.0f, -10.0f);
+void BoxObject::drawMesh(const Mesh& mesh) {
+    glm::mat resultLocalMatrix(mesh.local);
+    resultLocalMatrix = glm::translate(resultLocalMatrix, glm::vec3(0.0f, 0.0f, -40.0f));
+    static float degree = 0.f;
+    degree += 0.005f;
+    resultLocalMatrix = glm::rotate(resultLocalMatrix, glm::radians(degree), {1, 0, 0});
+    resultLocalMatrix = glm::rotate(resultLocalMatrix, glm::radians(degree), {0, 1, 0});
+    float scaleFactor = 0.2f;
+    resultLocalMatrix = glm::scale(resultLocalMatrix, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
 
-    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, mesh.positions.data());
     glEnableVertexAttribArray(vertexLocation);
-    glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, 0, verticesColor);
-    glEnableVertexAttribArray(colorLocation);
+    glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, 0, mesh.normals.data());
+    glEnableVertexAttribArray(normalLocation);
 
-    glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, projectionMatrix);
-    glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, modelViewMatrix);
+    glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+    glUniformMatrix4fv(localLocation, 1, GL_FALSE, glm::value_ptr(resultLocalMatrix));
 
-    glDrawElements(GL_LINE_LOOP, 36, GL_UNSIGNED_SHORT, indices);
+    glDrawElements(GL_TRIANGLES, mesh.indices.size() * 3, GL_UNSIGNED_INT, mesh.indices.data());
 
-    angle += 1;
-    if (angle > 360)
-    {
-        angle -= 360;
+    for (const Mesh& child: mesh.children) {
+        drawMesh(child);
     }
 }

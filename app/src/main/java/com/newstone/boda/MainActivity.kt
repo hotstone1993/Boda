@@ -2,8 +2,11 @@ package com.newstone.boda
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.res.AssetManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Surface
 import android.widget.Toast
@@ -20,6 +23,7 @@ import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
 
+    private val MODEL_PATH = "face_detection_short_range.tflite"
     lateinit var binding: ActivityMainBinding
     private lateinit var cameraExecutor: ExecutorService
     private val executor = Executors.newSingleThreadExecutor()
@@ -29,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         if (allPermissionsGranted()) {
             startCamera()
@@ -40,10 +45,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initGlSurfaceView() {
+        val listener = object: CameraRenderer.FPSEventListener {
+            override fun handle(fps: String) {
+                Handler(Looper.getMainLooper()).post {
+                    binding.fps.text = fps
+                }
+            }
+        }
+
         binding.glSurfaceView.apply {
+            val model = getModel(resources.assets, MODEL_PATH)
             setEGLContextFactory(ContextFactory())
             setEGLConfigChooser(ConfigChooser())
-            setRenderer(CameraRenderer(input))
+            setRenderer(CameraRenderer(input, listener, model))
         }
     }
 
@@ -110,6 +124,10 @@ class MainActivity : AppCompatActivity() {
                 Log.e(TAG, "Use case binding failed", exc)
             }
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    private fun getModel(assetManager: AssetManager, path: String): ByteArray {
+        return assetManager.open(path).readBytes()
     }
 
     companion object {

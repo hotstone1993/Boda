@@ -7,20 +7,19 @@
 #include <memory>
 
 #include "include/MainScene.h"
-#include "object/include/BaseObject.h"
-#include "object/include/PlaneObject.h"
-#include "object/include/BoxObject.h"
+#include "object/include/ObjectFactory.h"
 
 MainScene::MainScene() {
-    objects.push_back(std::make_unique<PlaneObject>());
-    objects.push_back(std::make_unique<BoxObject>());
+    objects.push_back(ObjectFactory::createObject(ObjectType::PLANE));
+    objects.push_back(ObjectFactory::createObject(ObjectType::BOX));
 }
 
 MainScene::~MainScene() {
-
 }
 
-bool MainScene::setupGraphic(int width, int height) {
+bool MainScene::setupGraphic(int width, int height, const char* model, size_t modelSize) {
+    mlDelegate.setup(model, modelSize);
+
     for (const std::unique_ptr<BaseObject>& object: objects) {
         object->setupGraphic(width, height);
     }
@@ -30,12 +29,18 @@ bool MainScene::setupGraphic(int width, int height) {
     return true;
 }
 
-void MainScene::renderFrame(unsigned char* array)
-{
+void MainScene::renderFrame(unsigned char* image) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+    mlDelegate.setArray(image);
+
     for (const std::unique_ptr<BaseObject>& object: objects) {
-        object->renderFrame(array);
+        ObjectType type = object->getType();
+        if (type == ObjectType::BOX) {
+            object->renderFrame(mlDelegate.getOutput());
+        } else if (type == ObjectType::PLANE) {
+            object->renderFrame(image);
+        }
     }
 }

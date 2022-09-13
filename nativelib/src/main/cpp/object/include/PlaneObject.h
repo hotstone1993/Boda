@@ -13,7 +13,7 @@ public:
     ~PlaneObject();
 
     virtual void setupGraphic(int width, int height) override;
-    virtual void renderFrame(unsigned char* array = nullptr) override;
+    virtual void renderFrame(void* array) override;
 private:
     unsigned int loadSimpleTexture(unsigned char* array);
     unsigned int vertexShader = 0;
@@ -23,8 +23,8 @@ private:
     unsigned int projectionLocation;
     unsigned int modelViewLocation;
 
-    float projectionMatrix[16];
-    float modelViewMatrix[16];
+    glm::mat4 projectionMatrix{1};
+    glm::mat4 modelViewMatrix{1};
     unsigned short indices[6];
     float vertices[12];
     float textureCoordinates[8];
