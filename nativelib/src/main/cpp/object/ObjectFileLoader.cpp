@@ -11,7 +11,7 @@ ObjectFileLoader::ObjectFileLoader() = default;
 
 ObjectFileLoader::~ObjectFileLoader() = default;
 
-void loadMesh(Mesh& mesh, std::ifstream& read) {
+void loadMesh(BaseMesh& mesh, std::ifstream& read) {
     read.read((char*)glm::value_ptr(mesh.local), sizeof(float) * 16);
     unsigned int indexSize = 0;
     unsigned int positionSize = 0;
@@ -42,7 +42,7 @@ void loadMesh(Mesh& mesh, std::ifstream& read) {
     }
 }
 
-bool ObjectFileLoader::loadFile(std::string_view path, Mesh& mesh) {
+bool ObjectFileLoader::loadFile(std::string_view path, BaseMesh& mesh) {
     std::ifstream read(path, std::ifstream::binary);
 
     if (read.is_open()) {

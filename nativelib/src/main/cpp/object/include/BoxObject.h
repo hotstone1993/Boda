@@ -19,7 +19,7 @@ public:
     virtual void renderFrame(void* array = nullptr) override;
 
 private:
-    void drawMesh(const Mesh& mesh);
+    void drawMesh(const BaseMesh& mesh);
 
     float angle = 0;
     std::unique_ptr<BaseLoader> loader;
@@ -30,7 +30,7 @@ private:
     unsigned int localLocation{};
 
     glm::mat4 projectionMatrix{};
-    Mesh root;
+    BaseMesh root;
 };
 
 

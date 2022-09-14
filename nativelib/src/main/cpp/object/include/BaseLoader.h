@@ -10,7 +10,7 @@
 
 class BaseLoader {
 public:
-    virtual bool loadFile(std::string_view path, Mesh& mesh) = 0;
+    virtual bool loadFile(std::string_view path, BaseMesh& mesh) = 0;
 };
 
 

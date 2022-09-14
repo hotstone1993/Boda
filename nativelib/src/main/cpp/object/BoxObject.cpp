@@ -91,7 +91,7 @@ void BoxObject::renderFrame(void* array) {
 }
 
 
-void BoxObject::drawMesh(const Mesh& mesh) {
+void BoxObject::drawMesh(const BaseMesh& mesh) {
     glm::mat resultLocalMatrix(mesh.local);
     resultLocalMatrix = glm::translate(resultLocalMatrix, glm::vec3(0.0f, 0.0f, -40.0f));
     static float degree = 0.f;
@@ -111,7 +111,7 @@ void BoxObject::drawMesh(const Mesh& mesh) {
 
     glDrawElements(GL_TRIANGLES, mesh.indices.size() * 3, GL_UNSIGNED_INT, mesh.indices.data());
 
-    for (const Mesh& child: mesh.children) {
+    for (const BaseMesh& child: mesh.children) {
         drawMesh(child);
     }
 }

@@ -12,7 +12,7 @@ public:
     ObjectFileLoader();
     virtual ~ObjectFileLoader();
 
-    bool loadFile(std::string_view path, Mesh& mesh) override;
+    bool loadFile(std::string_view path, BaseMesh& mesh) override;
 };
 
 
