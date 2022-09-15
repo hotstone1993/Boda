@@ -7,6 +7,7 @@
 
 #include <list>
 #include "MLDelegate.h"
+#include "Light.h"
 
 class BaseObject;
 
@@ -19,6 +20,7 @@ public:
     void renderFrame(unsigned char* image);
 private:
     std::list<std::unique_ptr<BaseObject>> objects;
+    std::list<std::unique_ptr<Light>> lights;
     MLDelegate mlDelegate;
 };
 

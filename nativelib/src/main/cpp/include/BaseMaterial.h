@@ -21,6 +21,8 @@ public:
     glm::vec3 ambient{0.f};
     glm::vec3 diffuse{0.f};
     glm::vec3 specular{0.f};
+    float alpha  = 0.f;
+    float ks = 0.f;
 };
 
 #endif //BODA_BASEMATERIAL_H

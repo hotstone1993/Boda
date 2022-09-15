@@ -41,13 +41,6 @@ struct Normal {
 class BaseMesh {
 public:
     BaseMesh() = default;
-    BaseMesh(const BaseMesh& other): local(other.local)
-    , positions(other.positions)
-    , indices(other.indices)
-    , normals(other.normals)
-    , children(other.children) {
-        this->material = other.material;
-    };
     virtual ~BaseMesh() = default;
 
     glm::mat4 local;
@@ -55,8 +48,6 @@ public:
     std::vector<Index> indices;
     std::vector<Normal> normals;
     std::vector<BaseMesh> children;
-
-    std::shared_ptr<BaseMaterial> material;
 };
 
 #endif //BODA_BASEMESH_H

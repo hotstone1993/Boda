@@ -5,6 +5,7 @@ project("nativelib")
 
 add_library(${PROJECT_NAME}
              SHARED
+             Light.cpp
              nativelib.cpp
              MainScene.cpp
              MLDelegate.cpp

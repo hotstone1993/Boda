@@ -6,6 +6,13 @@
 BoxObject::BoxObject() {
     objectType = ObjectType::BOX;
     loader = std::make_unique<ObjectFileLoader>();
+    material = std::make_unique<BaseMaterial>();
+
+    material->ambient = glm::vec3(0.2f, 0.2f, 0.2f);
+    material->diffuse = glm::vec3(0.0f, 0.3f, 0.0f);
+    material->specular = glm::vec3(0.6f, 0.6f, 0.6f);
+    material->alpha = 9.0f;
+    material->ks = 0.8f;
 }
 
 BoxObject::~BoxObject() {
@@ -74,6 +81,12 @@ void BoxObject::setupGraphic(int width, int height, AAssetManager *mgr) {
     projectionLocation = glGetUniformLocation(program, "projection");
     localLocation = glGetUniformLocation(program, "modelView");
 
+    ambientLocation = glGetUniformLocation(program, "ambient");
+    diffuseLocation = glGetUniformLocation(program, "diffuse");
+    specularLocation = glGetUniformLocation(program, "specular");
+    alphaLocation = glGetUniformLocation(program, "alpha");
+    ksLocation = glGetUniformLocation(program, "ks");
+
     if (width < height) {
         projectionMatrix = glm::perspectiveFov<float>(45.f, width, height, 0.1f, 100);
     } else {
@@ -86,6 +99,12 @@ void BoxObject::setupGraphic(int width, int height, AAssetManager *mgr) {
 
 void BoxObject::renderFrame(void* array) {
     glUseProgram(program);
+
+    glUniform3fv(ambientLocation, 1, glm::value_ptr(material->ambient));
+    glUniform3fv(diffuseLocation, 1, glm::value_ptr(material->diffuse));
+    glUniform3fv(specularLocation, 1, glm::value_ptr(material->specular));
+    glUniform1f(alphaLocation, material->alpha);
+    glUniform1f(ksLocation, material->ks);
 
     drawMesh(root);
 }

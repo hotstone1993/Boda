@@ -10,6 +10,8 @@
 MainScene::MainScene() {
     objects.push_back(ObjectFactory::createObject(ObjectType::PLANE));
     objects.push_back(ObjectFactory::createObject(ObjectType::BOX));
+
+    lights.push_back(std::make_unique<Light>(0.0f, 0.0f, 1.0f));
 }
 
 MainScene::~MainScene() {
@@ -32,6 +34,10 @@ void MainScene::renderFrame(unsigned char* image) {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     mlDelegate.setArray(image);
+
+    for (const std::unique_ptr<Light>& light: lights) {
+        light->placeLight();
+    }
 
     for (const std::unique_ptr<BaseObject>& object: objects) {
         ObjectType type = object->getType();

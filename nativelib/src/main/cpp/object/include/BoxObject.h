@@ -29,6 +29,12 @@ private:
     unsigned int projectionLocation{};
     unsigned int localLocation{};
 
+    unsigned int ambientLocation{};
+    unsigned int diffuseLocation{};
+    unsigned int specularLocation{};
+    unsigned int alphaLocation{};
+    unsigned int ksLocation{};
+
     glm::mat4 projectionMatrix{};
     BaseMesh root;
 };

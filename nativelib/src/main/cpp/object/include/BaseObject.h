@@ -28,6 +28,8 @@ public:
 protected:
     unsigned int program = 0;
     ObjectType objectType = ObjectType::UNKNOWN;
+
+    std::unique_ptr<BaseMaterial> material;
 };
 
 
