@@ -5,7 +5,8 @@
 #include "PlaneObject.h"
 #include "GLUtils.h"
 
-PlaneObject::PlaneObject(): indices {0, 2, 3, 0, 1, 3},
+PlaneObject::PlaneObject(unsigned int idx): BaseObject(idx),
+                            indices {0, 2, 3, 0, 1, 3},
                             vertices {
                                     -1.0f,  1.0f, 0.0f,
                                     1.0f,  1.0f, 0.0f,
@@ -31,8 +32,9 @@ PlaneObject::~PlaneObject() {
     }
 }
 
-void PlaneObject::setupGraphic(int width, int height, AAssetManager *mgr) {
+void PlaneObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& camera, AAssetManager *mgr) {
     program = glCreateProgram();
+    this->camera = camera;
 
     vertexShader = BODA::loadShader(GL_VERTEX_SHADER, glVertexShader);
     if (vertexShader == 0)
@@ -73,16 +75,12 @@ void PlaneObject::setupGraphic(int width, int height, AAssetManager *mgr) {
     }
     vertexLocation = glGetAttribLocation(program, "vertexPosition");
     textureCoordinateLocation = glGetAttribLocation(program, "attributeTextureCoordinate");
-    projectionLocation = glGetUniformLocation(program, "projection");
-    modelViewLocation = glGetUniformLocation(program, "modelView");
+    camera->setProjectionLocation(glGetUniformLocation(program, "projection"));
+    camera->setViewLocation(glGetUniformLocation(program, "view"));
+    worldLocation = glGetUniformLocation(program, "world");
 
-    if (width < height) {
-        projectionMatrix = glm::perspectiveFov<float>(45, width, height, 0.1f, 110);
-    } else {
-        projectionMatrix = glm::perspectiveFov<float>(45, height, width, 0.1f, 110);
-    }
-    modelViewMatrix = glm::scale(modelViewMatrix, glm::vec3(48.f / (height / width * 2.f), 64 / (height / width * 2.f), 1));
-    modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0f, 0.0f, -100.0f));
+    worldMatrix = glm::scale(worldMatrix, glm::vec3(48.f / (height / width * 2.f), 64 / (height / width * 2.f), 1));
+    worldMatrix = glm::translate(worldMatrix, glm::vec3(0.0f, 0.0f, -95.0f));
 }
 
 void PlaneObject::renderFrame(void* array) {
@@ -92,8 +90,9 @@ void PlaneObject::renderFrame(void* array) {
     glVertexAttribPointer(textureCoordinateLocation, 2, GL_FLOAT, GL_FALSE, 0, textureCoordinates);
     glEnableVertexAttribArray(textureCoordinateLocation);
 
-    glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-    glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
+    camera->setCameraMatrix(objectIndex);
+
+    glUniformMatrix4fv(worldLocation, 1, GL_FALSE, glm::value_ptr(worldMatrix));
 
     GLuint id = loadSimpleTexture(reinterpret_cast<unsigned char*>(array));
 

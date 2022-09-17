@@ -6,6 +6,7 @@
 #define BODA_BASEOBJECT_H
 
 #include <vector>
+#include "Camera.h"
 #include "BaseMesh.h"
 #include "GLUtils.h"
 
@@ -13,13 +14,12 @@ enum class ObjectType {
     UNKNOWN, BOX, PLANE
 };
 
-
 class BaseObject {
 public:
-    BaseObject() = default;
+    BaseObject(unsigned int idx): objectIndex(idx) {};
     virtual ~BaseObject() = default;
 
-    virtual void setupGraphic(int width, int height, AAssetManager *mgr) = 0;
+    virtual void setupGraphic(int width, int height, std::shared_ptr<Camera>& camera, AAssetManager *mgr) = 0;
     virtual void renderFrame(void* array = nullptr) = 0;
 
     ObjectType getType() const {
@@ -27,9 +27,11 @@ public:
     };
 protected:
     unsigned int program = 0;
+    unsigned int objectIndex = 0;
     ObjectType objectType = ObjectType::UNKNOWN;
 
     std::unique_ptr<BaseMaterial> material;
+    std::shared_ptr<Camera> camera;
 };
 
 

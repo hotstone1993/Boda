@@ -9,10 +9,10 @@
 
 class PlaneObject: public BaseObject {
 public:
-    PlaneObject();
+    PlaneObject(unsigned int idx);
     ~PlaneObject();
 
-    virtual void setupGraphic(int width, int height, AAssetManager *mgr) override;
+    virtual void setupGraphic(int width, int height, std::shared_ptr<Camera>& camera, AAssetManager *mgr) override;
     virtual void renderFrame(void* array) override;
 private:
     unsigned int loadSimpleTexture(unsigned char* array);
@@ -20,11 +20,9 @@ private:
     unsigned int fragmentShader = 0;
     unsigned int vertexLocation = 0;
     unsigned int textureCoordinateLocation = 0;
-    unsigned int projectionLocation;
-    unsigned int modelViewLocation;
+    unsigned int worldLocation;
 
-    glm::mat4 projectionMatrix{1};
-    glm::mat4 modelViewMatrix{1};
+    glm::mat4 worldMatrix{1};
     unsigned short indices[6];
     float vertices[12];
     float textureCoordinates[8];
@@ -34,10 +32,11 @@ private:
             "attribute vec2 attributeTextureCoordinate;\n"
             "varying vec2 textureCord;\n"
             "uniform mat4 projection;\n"
-            "uniform mat4 modelView;\n"
+            "uniform mat4 view;\n"
+            "uniform mat4 world;\n"
             "void main()\n"
             "{\n"
-            "    gl_Position = projection * modelView * vertexPosition;\n"
+            "    gl_Position = projection * view * world * vertexPosition;\n"
             "    textureCord = attributeTextureCoordinate;\n"
             "}\n";
 

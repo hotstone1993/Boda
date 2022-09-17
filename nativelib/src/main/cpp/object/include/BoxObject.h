@@ -10,11 +10,11 @@
 
 class BoxObject : public BaseObject {
 public:
-    BoxObject();
+    BoxObject(unsigned int idx);
 
     ~BoxObject();
 
-    virtual void setupGraphic(int width, int height, AAssetManager *mgr) override;
+    virtual void setupGraphic(int width, int height, std::shared_ptr<Camera>& camera, AAssetManager *mgr) override;
 
     virtual void renderFrame(void* array = nullptr) override;
 
@@ -26,8 +26,7 @@ private:
 
     unsigned int vertexLocation{};
     unsigned int normalLocation{};
-    unsigned int projectionLocation{};
-    unsigned int localLocation{};
+    unsigned int worldLocation{};
 
     unsigned int ambientLocation{};
     unsigned int diffuseLocation{};
@@ -35,7 +34,6 @@ private:
     unsigned int alphaLocation{};
     unsigned int ksLocation{};
 
-    glm::mat4 projectionMatrix{};
     BaseMesh root;
 };
 

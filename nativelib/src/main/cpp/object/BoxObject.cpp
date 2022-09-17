@@ -3,7 +3,7 @@
 //
 #include "include/BoxObject.h"
 
-BoxObject::BoxObject() {
+BoxObject::BoxObject(unsigned int idx): BaseObject(idx) {
     objectType = ObjectType::BOX;
     loader = std::make_unique<ObjectFileLoader>();
     material = std::make_unique<BaseMaterial>();
@@ -21,8 +21,9 @@ BoxObject::~BoxObject() {
     }
 }
 
-void BoxObject::setupGraphic(int width, int height, AAssetManager *mgr) {
+void BoxObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& camera, AAssetManager *mgr) {
     program = glCreateProgram();
+    this->camera = camera;
     size_t shaderSize = 0;
     char* shader = nullptr;
 
@@ -78,21 +79,15 @@ void BoxObject::setupGraphic(int width, int height, AAssetManager *mgr) {
 
     vertexLocation = glGetAttribLocation(program, "vertexPosition");
     normalLocation = glGetAttribLocation(program, "vertexNormal");
-    projectionLocation = glGetUniformLocation(program, "projection");
-    localLocation = glGetUniformLocation(program, "modelView");
+    camera->setProjectionLocation(glGetUniformLocation(program, "projection"));
+    camera->setViewLocation(glGetUniformLocation(program, "view"));
+    worldLocation = glGetUniformLocation(program, "world");
 
     ambientLocation = glGetUniformLocation(program, "ambient");
     diffuseLocation = glGetUniformLocation(program, "diffuse");
     specularLocation = glGetUniformLocation(program, "specular");
     alphaLocation = glGetUniformLocation(program, "alpha");
     ksLocation = glGetUniformLocation(program, "ks");
-
-    if (width < height) {
-        projectionMatrix = glm::perspectiveFov<float>(45.f, width, height, 0.1f, 100);
-    } else {
-        projectionMatrix = glm::perspectiveFov<float>(45.f, height, width, 0.1f, 100);
-    }
-
 
     loader->loadFile("/sdcard/Download/dragon.bss", root);
 }
@@ -125,8 +120,9 @@ void BoxObject::drawMesh(const BaseMesh& mesh) {
     glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, 0, mesh.normals.data());
     glEnableVertexAttribArray(normalLocation);
 
-    glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-    glUniformMatrix4fv(localLocation, 1, GL_FALSE, glm::value_ptr(resultLocalMatrix));
+    camera->setCameraMatrix(objectIndex);
+
+    glUniformMatrix4fv(worldLocation, 1, GL_FALSE, glm::value_ptr(resultLocalMatrix));
 
     glDrawElements(GL_TRIANGLES, mesh.indices.size() * 3, GL_UNSIGNED_INT, mesh.indices.data());
 

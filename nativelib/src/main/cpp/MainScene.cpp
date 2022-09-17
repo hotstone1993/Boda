@@ -7,9 +7,10 @@
 #include "include/MainScene.h"
 #include "object/include/ObjectFactory.h"
 
-MainScene::MainScene() {
-    objects.push_back(ObjectFactory::createObject(ObjectType::PLANE));
-    objects.push_back(ObjectFactory::createObject(ObjectType::BOX));
+MainScene::MainScene(): camera(std::make_shared<Camera>()) {
+    unsigned int idx = 0;
+    objects.push_back(ObjectFactory::createObject(ObjectType::PLANE, idx++));
+    objects.push_back(ObjectFactory::createObject(ObjectType::BOX, idx++));
 
     lights.push_back(std::make_unique<Light>(0.0f, 0.0f, 1.0f));
 }
@@ -21,10 +22,12 @@ bool MainScene::setupGraphic(int width, int height, AAssetManager *mgr) {
     mlDelegate.setup(mgr);
 
     for (const std::unique_ptr<BaseObject>& object: objects) {
-        object->setupGraphic(width, height, mgr);
+        object->setupGraphic(width, height, camera, mgr);
     }
+
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);
+    camera->setupCamera(width, height);
 
     return true;
 }

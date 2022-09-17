@@ -10,6 +10,7 @@
 #include "Light.h"
 
 class BaseObject;
+class Camera;
 
 class MainScene {
 public:
@@ -21,6 +22,9 @@ public:
 private:
     std::list<std::unique_ptr<BaseObject>> objects;
     std::list<std::unique_ptr<Light>> lights;
+
+    std::shared_ptr<Camera> camera;
+
     MLDelegate mlDelegate;
 };
 
