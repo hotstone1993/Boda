@@ -10,13 +10,13 @@
 
 class ObjectFactory {
 public:
-    static std::unique_ptr<BaseObject> createObject(const ObjectType& type, unsigned int idx) {
+    static std::unique_ptr<BaseObject> createObject(const ObjectType& type, size_t key) {
         if (type == ObjectType::BOX) {
-            return std::make_unique<BoxObject>(idx);
+            return std::make_unique<BoxObject>(key);
         } else if(type == ObjectType::PLANE) {
-            return std::make_unique<PlaneObject>(idx);
+            return std::make_unique<PlaneObject>(key);
         } else {
-            return std::make_unique<BoxObject>(idx);
+            return std::make_unique<BoxObject>(key);
         }
     }
 };

@@ -14,13 +14,25 @@ uniform vec3 specular;
 uniform float alpha;
 uniform float ks;
 
+vec4 PointLight(vec3 vPosition, vec3 vNormal)
+{
+    vec3 toLight = lightPosition - vPosition;
+    float fDistance = length(toLight);
+
+    float fSpecularFactor = 0.0f;
+    toLight /= fDistance;
+    float fDiffuseFactor = dot(toLight, vNormal);
+    if (fDiffuseFactor > 0.0f)
+    {
+        vec3 vReflect = reflect(-toLight, vNormal);
+        fSpecularFactor = pow(max(dot(vReflect, cameraPosition), 0.0f), alpha);
+        return vec4((ambient + (fDiffuseFactor * diffuse) + (fSpecularFactor * specular) * ks), 1.0f);
+    }
+
+    return vec4(0.0f, 0.0f, 0.0f, 0.0f);
+}
+
 void main()
 {
-    vec3 d = normalize(vec3(0.0f ,0.0f, 0.0f) - fragPos);
-    float diff = max(dot(fragNormal, d), 0.0f);
-    vec3 reflectDir = (2.0f * dot(fragNormal, d) * fragNormal) - d;
-    float spec = pow(max(dot(vec3(0, 0, -1), reflectDir), 0.0f), alpha);
-    vec3 fragColour = ambient + diffuse * diff + specular * ks * spec;
-
-    resultColor = vec4(fragColour, 1.0);
+    resultColor = PointLight(fragPos, fragNormal);
 }

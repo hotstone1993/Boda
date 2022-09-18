@@ -16,7 +16,7 @@ enum class ObjectType {
 
 class BaseObject {
 public:
-    BaseObject(unsigned int idx): objectIndex(idx) {};
+    BaseObject(const size_t& key): key(key) {};
     virtual ~BaseObject() = default;
 
     virtual void setupGraphic(int width, int height, std::shared_ptr<Camera>& camera, AAssetManager *mgr) = 0;
@@ -27,7 +27,7 @@ public:
     };
 protected:
     unsigned int program = 0;
-    unsigned int objectIndex = 0;
+    size_t key;
     ObjectType objectType = ObjectType::UNKNOWN;
 
     std::unique_ptr<BaseMaterial> material;

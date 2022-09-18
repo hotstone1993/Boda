@@ -5,6 +5,7 @@
 #ifndef BODA_MAINSCENE_H
 #define BODA_MAINSCENE_H
 
+#include <unordered_map>
 #include <list>
 #include "MLDelegate.h"
 #include "Light.h"
@@ -20,6 +21,8 @@ public:
     bool setupGraphic(int width, int height, AAssetManager *mgr);
     void renderFrame(unsigned char* image);
 private:
+    void initObjects();
+
     std::list<std::unique_ptr<BaseObject>> objects;
     std::list<std::unique_ptr<Light>> lights;
 

@@ -3,7 +3,7 @@
 //
 #include "include/BoxObject.h"
 
-BoxObject::BoxObject(unsigned int idx): BaseObject(idx) {
+BoxObject::BoxObject(const size_t& key): BaseObject(key) {
     objectType = ObjectType::BOX;
     loader = std::make_unique<ObjectFileLoader>();
     material = std::make_unique<BaseMaterial>();
@@ -79,10 +79,11 @@ void BoxObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& cam
 
     vertexLocation = glGetAttribLocation(program, "vertexPosition");
     normalLocation = glGetAttribLocation(program, "vertexNormal");
-    camera->setProjectionLocation(glGetUniformLocation(program, "projection"));
-    camera->setViewLocation(glGetUniformLocation(program, "view"));
+    camera->setProjectionLocation(key, glGetUniformLocation(program, "projection"));
+    camera->setViewLocation(key, glGetUniformLocation(program, "view"));
     worldLocation = glGetUniformLocation(program, "world");
 
+    camera->setCameraPositionLocation(key, glGetUniformLocation(program, "cameraPosition"));
     ambientLocation = glGetUniformLocation(program, "ambient");
     diffuseLocation = glGetUniformLocation(program, "diffuse");
     specularLocation = glGetUniformLocation(program, "specular");
@@ -94,6 +95,8 @@ void BoxObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& cam
 
 void BoxObject::renderFrame(void* array) {
     glUseProgram(program);
+
+    camera->setCameraMatrix(key);
 
     glUniform3fv(ambientLocation, 1, glm::value_ptr(material->ambient));
     glUniform3fv(diffuseLocation, 1, glm::value_ptr(material->diffuse));
@@ -119,8 +122,6 @@ void BoxObject::drawMesh(const BaseMesh& mesh) {
     glEnableVertexAttribArray(vertexLocation);
     glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, 0, mesh.normals.data());
     glEnableVertexAttribArray(normalLocation);
-
-    camera->setCameraMatrix(objectIndex);
 
     glUniformMatrix4fv(worldLocation, 1, GL_FALSE, glm::value_ptr(resultLocalMatrix));
 

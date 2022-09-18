@@ -8,14 +8,24 @@
 #include "object/include/ObjectFactory.h"
 
 MainScene::MainScene(): camera(std::make_shared<Camera>()) {
-    unsigned int idx = 0;
-    objects.push_back(ObjectFactory::createObject(ObjectType::PLANE, idx++));
-    objects.push_back(ObjectFactory::createObject(ObjectType::BOX, idx++));
+    initObjects();
 
     lights.push_back(std::make_unique<Light>(0.0f, 0.0f, 1.0f));
 }
 
 MainScene::~MainScene() {
+}
+
+void MainScene::initObjects() {
+    std::hash<std::string> hasher;
+    std::string base = "Object";
+    int idx = 0;
+
+    size_t curr = hasher(base + std::to_string(idx++));
+    objects.push_back(ObjectFactory::createObject(ObjectType::PLANE, curr));
+
+    curr = hasher(base + std::to_string(idx++));
+    objects.push_back(ObjectFactory::createObject(ObjectType::BOX, curr));
 }
 
 bool MainScene::setupGraphic(int width, int height, AAssetManager *mgr) {

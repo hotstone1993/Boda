@@ -10,7 +10,7 @@
 
 class BoxObject : public BaseObject {
 public:
-    BoxObject(unsigned int idx);
+    BoxObject(const size_t& key);
 
     ~BoxObject();
 

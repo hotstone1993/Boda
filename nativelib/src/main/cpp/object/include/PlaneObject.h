@@ -9,7 +9,7 @@
 
 class PlaneObject: public BaseObject {
 public:
-    PlaneObject(unsigned int idx);
+    PlaneObject(const size_t& key);
     ~PlaneObject();
 
     virtual void setupGraphic(int width, int height, std::shared_ptr<Camera>& camera, AAssetManager *mgr) override;
@@ -20,7 +20,7 @@ private:
     unsigned int fragmentShader = 0;
     unsigned int vertexLocation = 0;
     unsigned int textureCoordinateLocation = 0;
-    unsigned int worldLocation;
+    unsigned int worldLocation = 0;
 
     glm::mat4 worldMatrix{1};
     unsigned short indices[6];

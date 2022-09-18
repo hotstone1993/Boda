@@ -5,7 +5,7 @@
 #include "PlaneObject.h"
 #include "GLUtils.h"
 
-PlaneObject::PlaneObject(unsigned int idx): BaseObject(idx),
+PlaneObject::PlaneObject(const size_t& key): BaseObject(key),
                             indices {0, 2, 3, 0, 1, 3},
                             vertices {
                                     -1.0f,  1.0f, 0.0f,
@@ -75,8 +75,8 @@ void PlaneObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& c
     }
     vertexLocation = glGetAttribLocation(program, "vertexPosition");
     textureCoordinateLocation = glGetAttribLocation(program, "attributeTextureCoordinate");
-    camera->setProjectionLocation(glGetUniformLocation(program, "projection"));
-    camera->setViewLocation(glGetUniformLocation(program, "view"));
+    camera->setProjectionLocation(key, glGetUniformLocation(program, "projection"));
+    camera->setViewLocation(key, glGetUniformLocation(program, "view"));
     worldLocation = glGetUniformLocation(program, "world");
 
     worldMatrix = glm::scale(worldMatrix, glm::vec3(48.f / (height / width * 2.f), 64 / (height / width * 2.f), 1));
@@ -90,7 +90,7 @@ void PlaneObject::renderFrame(void* array) {
     glVertexAttribPointer(textureCoordinateLocation, 2, GL_FLOAT, GL_FALSE, 0, textureCoordinates);
     glEnableVertexAttribArray(textureCoordinateLocation);
 
-    camera->setCameraMatrix(objectIndex);
+    camera->setCameraMatrix(key);
 
     glUniformMatrix4fv(worldLocation, 1, GL_FALSE, glm::value_ptr(worldMatrix));
 
