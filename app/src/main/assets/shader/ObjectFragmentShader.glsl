@@ -16,20 +16,16 @@ uniform float ks;
 
 vec4 PointLight(vec3 vPosition, vec3 vNormal)
 {
-    vec3 toLight = lightPosition - vPosition;
+    vec3 toLight = vec3(0.0f, 0.0f, 0.0f) - vPosition;
     float fDistance = length(toLight);
 
     float fSpecularFactor = 0.0f;
     toLight /= fDistance;
     float fDiffuseFactor = dot(toLight, vNormal);
-    if (fDiffuseFactor > 0.0f)
-    {
-        vec3 vReflect = reflect(-toLight, vNormal);
-        fSpecularFactor = pow(max(dot(vReflect, cameraPosition), 0.0f), alpha);
-        return vec4((ambient + (fDiffuseFactor * diffuse) + (fSpecularFactor * specular) * ks), 1.0f);
-    }
 
-    return vec4(0.0f, 0.0f, 0.0f, 0.0f);
+    vec3 vReflect = reflect(-toLight, vNormal);
+    fSpecularFactor = pow(max(dot(vReflect, cameraPosition), 0.0f), alpha);
+    return vec4((ambient + (fDiffuseFactor * diffuse) + (fSpecularFactor * specular) * ks), 1.0f);
 }
 
 void main()
