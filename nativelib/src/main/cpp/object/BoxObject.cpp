@@ -74,13 +74,14 @@ void BoxObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& cam
             }
             glDeleteProgram(program);
             program = 0;
+            return;
         }
     }
 
     vertexLocation = glGetAttribLocation(program, "vertexPosition");
     normalLocation = glGetAttribLocation(program, "vertexNormal");
-    camera->setProjectionLocation(key, glGetUniformLocation(program, "projection"));
-    camera->setViewLocation(key, glGetUniformLocation(program, "view"));
+    unsigned int matrices = glGetUniformBlockIndex(program, "Matrices");
+    camera->setUniformBuffer(program, matrices);
     worldLocation = glGetUniformLocation(program, "world");
 
     camera->setCameraPositionLocation(key, glGetUniformLocation(program, "cameraPosition"));
@@ -94,6 +95,9 @@ void BoxObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& cam
 }
 
 void BoxObject::renderFrame(void* array) {
+    if (program == 0)
+        return;
+
     glUseProgram(program);
 
     camera->setCameraMatrix(key);

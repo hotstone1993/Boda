@@ -19,7 +19,6 @@ public:
             look(0.0f, 0.0f, -1.0f),
             up(0.0f, 1.0f, 0.0f)
             {
-        viewMatrix = glm::lookAt(position, look, up);
     };
     ~Camera() = default;
 
@@ -29,14 +28,29 @@ public:
         } else {
             projectionMatrix = glm::perspectiveFov<float>(45, height, width, 0.1f, 100);
         }
+        viewMatrix = glm::lookAt(position, look, up);
     }
 
-    void setProjectionLocation(const size_t& key, unsigned int location) {
-        projectionLocation[key] = location;
+    void setUniformBuffer(unsigned int program, unsigned int blockIndex) {
+        glUniformBlockBinding(program, blockIndex, 0);
     }
 
-    void setViewLocation(const size_t& key, unsigned int location) {
-        viewLocation[key] = location;
+    void createUniformBuffer() {
+        glGenBuffers(1, &uboMatrices);
+
+        glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+        glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+        glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
+
+        glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projectionMatrix));
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+        glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(viewMatrix));
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
     void setCameraPositionLocation(const size_t& key, unsigned int location) {
@@ -44,16 +58,15 @@ public:
     }
 
     void setCameraMatrix(const size_t& key) {
-        glUniformMatrix4fv(projectionLocation[key], 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-        glUniformMatrix4fv(viewLocation[key], 1, GL_FALSE, glm::value_ptr(viewMatrix));
-
-        glUniform3fv(cameraPositionLocation[key], 1, glm::value_ptr(position));
+        auto item = cameraPositionLocation.find(key);
+        if (item != cameraPositionLocation.end()) {
+            glUniform3fv(item->second, 1, glm::value_ptr(position));
+        }
     }
 
 private:
+    unsigned int uboMatrices;
     std::unordered_map<size_t, unsigned int> cameraPositionLocation;
-    std::unordered_map<size_t, unsigned int> viewLocation;
-    std::unordered_map<size_t, unsigned int> projectionLocation;
 
     glm::mat4 viewMatrix{};
     glm::mat4 projectionMatrix{};

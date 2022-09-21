@@ -4,8 +4,11 @@ in vec4 vertexPosition;
 in vec3 vertexNormal;
 out vec3 fragPos;
 out vec3 fragNormal;
-uniform mat4 projection;
-uniform mat4 view;
+layout (std140) uniform Matrices
+{
+    mat4 projection;
+    mat4 view;
+};
 uniform mat4 world;
 
 void main()

@@ -28,11 +28,15 @@ private:
     float textureCoordinates[8];
 
     const char* glVertexShader =
-            "attribute vec4 vertexPosition;\n"
-            "attribute vec2 attributeTextureCoordinate;\n"
-            "varying vec2 textureCord;\n"
-            "uniform mat4 projection;\n"
-            "uniform mat4 view;\n"
+            "#version 320 es\n"
+            "in vec4 vertexPosition;\n"
+            "in vec2 attributeTextureCoordinate;\n"
+            "out vec2 textureCord;\n"
+            "layout (std140) uniform Matrices\n"
+            "{\n"
+            "    mat4 projection;\n"
+            "    mat4 view;\n"
+            "};\n"
             "uniform mat4 world;\n"
             "void main()\n"
             "{\n"
@@ -41,12 +45,14 @@ private:
             "}\n";
 
     const char* glFragmentShader =
+            "#version 320 es\n"
             "precision mediump float;\n"
-            "uniform sampler2D texture;\n"
-            "varying vec2 textureCord;\n"
+            "uniform sampler2D image;\n"
+            "in vec2 textureCord;\n"
+            "out vec4 resultColor;\n"
             "void main()\n"
             "{\n"
-            "    gl_FragColor = texture2D(texture, textureCord);\n"
+            "    resultColor = texture(image, textureCord);\n"
             "}\n";
 };
 

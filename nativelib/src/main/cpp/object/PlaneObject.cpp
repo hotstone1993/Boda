@@ -71,12 +71,13 @@ void PlaneObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& c
             }
             glDeleteProgram(program);
             program = 0;
+            return;
         }
     }
     vertexLocation = glGetAttribLocation(program, "vertexPosition");
     textureCoordinateLocation = glGetAttribLocation(program, "attributeTextureCoordinate");
-    camera->setProjectionLocation(key, glGetUniformLocation(program, "projection"));
-    camera->setViewLocation(key, glGetUniformLocation(program, "view"));
+    unsigned int matrices = glGetUniformBlockIndex(program, "Matrices");
+    camera->setUniformBuffer(program, matrices);
     worldLocation = glGetUniformLocation(program, "world");
 
     worldMatrix = glm::scale(worldMatrix, glm::vec3(48.f / (height / width * 2.f), 64 / (height / width * 2.f), 1));
@@ -84,6 +85,9 @@ void PlaneObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& c
 }
 
 void PlaneObject::renderFrame(void* array) {
+    if (program == 0)
+        return;
+
     glUseProgram(program);
     glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
     glEnableVertexAttribArray(vertexLocation);

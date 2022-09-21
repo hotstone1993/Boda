@@ -31,13 +31,16 @@ void MainScene::initObjects() {
 bool MainScene::setupGraphic(int width, int height, AAssetManager *mgr) {
     mlDelegate.setup(mgr);
 
+    camera->setupCamera(width, height);
+
     for (const std::unique_ptr<BaseObject>& object: objects) {
         object->setupGraphic(width, height, camera, mgr);
     }
 
+    camera->createUniformBuffer();
+
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);
-    camera->setupCamera(width, height);
 
     return true;
 }
