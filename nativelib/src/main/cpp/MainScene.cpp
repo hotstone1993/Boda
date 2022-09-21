@@ -2,8 +2,8 @@
 // Created by newst on 2022-07-17.
 //
 
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+#include <GLES3/gl3.h>
+#include <GLES3/gl3ext.h>
 #include "include/MainScene.h"
 #include "object/include/ObjectFactory.h"
 

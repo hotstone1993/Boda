@@ -5,8 +5,8 @@
 #ifndef BODA_GLUTILS_H
 #define BODA_GLUTILS_H
 
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+#include <GLES3/gl3.h>
+#include <GLES3/gl3ext.h>
 #include <memory>
 #include <android/log.h>
 #include <android/asset_manager.h>
