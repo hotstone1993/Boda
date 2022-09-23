@@ -6,17 +6,17 @@
 #include "GLUtils.h"
 
 PlaneObject::PlaneObject(const size_t& key): BaseObject(key),
-                            indices {0, 2, 3, 0, 1, 3},
+                            indices {0, 2, 3, 0, 3, 1},
                             vertices {
                                     -1.0f,  1.0f, 0.0f,
                                     1.0f,  1.0f, 0.0f,
                                     -1.0f, -1.0f, 0.0f,
                                     1.0f, -1.0f, 0.0f },
                             textureCoordinates {
-                                    0.0f, 0.0f,
                                     1.0f, 0.0f,
-                                    0.0f, 1.0f,
-                                    1.0f, 1.0f,} {
+                                    1.0f, 1.0f,
+                                    0.0f, 0.0f,
+                                    0.0f, 1.0f,} {
     objectType = ObjectType::PLANE;
 }
 
