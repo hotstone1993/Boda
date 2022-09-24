@@ -10,7 +10,8 @@ add_library(${PROJECT_NAME}
              MLDelegate.cpp
              object/PlaneObject.cpp
              object/BoxObject.cpp
-             object/ObjectFileLoader.cpp )
+             object/ObjectFileLoader.cpp
+             caculator/DetectionCalculator.cpp)
 
 set( PROJECT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../../ )
 set( THIRD_PARTY_PATH  ${PROJECT_ROOT_PATH}/thirdparty )
@@ -26,6 +27,7 @@ set( THIRDPARTY_LIBRARY
 target_include_directories(${PROJECT_NAME} PUBLIC
                             ${CMAKE_CURRENT_SOURCE_DIR}/include
                             ${CMAKE_CURRENT_SOURCE_DIR}/object/include
+                            ${CMAKE_CURRENT_SOURCE_DIR}/caculator/include
                             ${THIRD_PARTY_PATH}/glm/
                             ${THIRD_PARTY_PATH}/Noon/src/include
                             ${THIRD_PARTY_PATH}/Noon/src/include/flatbuffers

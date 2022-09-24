@@ -9,6 +9,7 @@
 #include <thread>
 #include <condition_variable>
 
+#include "DetectionCalculator.h"
 #include "Noon.h"
 
 enum class BufferStatus {
@@ -35,6 +36,8 @@ private:
     std::mutex mutex;
     std::condition_variable cv;
     BufferStatus status = BufferStatus::WAIT;
+
+    DetectionCalculator calculator;
 
     // hardcoding
     int width = 630;
