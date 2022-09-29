@@ -18,6 +18,7 @@ PlaneObject::PlaneObject(const size_t& key): BaseObject(key),
                                     0.0f, 0.0f,
                                     0.0f, 1.0f,} {
     objectType = ObjectType::PLANE;
+    position = glm::vec3(0.0f, 0.0f, -95.0f);
 }
 
 PlaneObject::~PlaneObject() {
@@ -81,7 +82,11 @@ void PlaneObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& c
     worldLocation = glGetUniformLocation(program, "world");
 
     worldMatrix = glm::scale(worldMatrix, glm::vec3(48.f / (height / width * 2.f), 64 / (height / width * 2.f), 1));
-    worldMatrix = glm::translate(worldMatrix, glm::vec3(0.0f, 0.0f, -95.0f));
+    worldMatrix = glm::translate(worldMatrix, position);
+}
+
+void PlaneObject::touchEvent(float x, float y) {
+    // Nothing
 }
 
 void PlaneObject::renderFrame(void* array) {

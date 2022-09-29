@@ -64,3 +64,9 @@ void MainScene::renderFrame(unsigned char* image) {
         }
     }
 }
+
+void MainScene::touchEvent(float x, float y) {
+    for (const std::unique_ptr<BaseObject>& object: objects) {
+        object->touchEvent(x, y);
+    }
+}

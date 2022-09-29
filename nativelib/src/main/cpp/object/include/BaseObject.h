@@ -21,6 +21,7 @@ public:
 
     virtual void setupGraphic(int width, int height, std::shared_ptr<Camera>& camera, AAssetManager *mgr) = 0;
     virtual void renderFrame(void* array = nullptr) = 0;
+    virtual void touchEvent(float x, float y) = 0;
 
     ObjectType getType() const {
         return objectType;
@@ -28,6 +29,7 @@ public:
 protected:
     unsigned int program = 0;
     size_t key;
+    glm::vec3 position;
     ObjectType objectType = ObjectType::UNKNOWN;
 
     std::unique_ptr<BaseMaterial> material;

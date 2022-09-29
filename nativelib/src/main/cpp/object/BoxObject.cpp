@@ -13,6 +13,7 @@ BoxObject::BoxObject(const size_t& key): BaseObject(key) {
     material->specular = glm::vec3(0.6f, 0.6f, 0.6f);
     material->alpha = 9.0f;
     material->ks = 0.8f;
+    position = glm::vec3(0.0f, 0.0f, -40.0f);
 }
 
 BoxObject::~BoxObject() {
@@ -94,6 +95,16 @@ void BoxObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& cam
     loader->loadFile("/sdcard/Download/dragon.bss", root);
 }
 
+void BoxObject::touchEvent(float x, float y) {
+    glm::vec4 cameraRay = glm::inverse(camera->getPorjectionMatrix()) * glm::vec4(x, y, -1.0f, 1.0f);
+    glm::vec3 worldRay = glm::inverse(camera->getViewMatrix()) * glm::vec4(cameraRay.x, cameraRay.y, -1.0f, 0.0f);
+    worldRay = glm::normalize(worldRay);
+
+    float t = position.z / worldRay.z;
+    position.x = worldRay.x * t;
+    position.y = worldRay.y * t;
+}
+
 void BoxObject::renderFrame(void* array) {
     if (program == 0)
         return;
@@ -111,10 +122,9 @@ void BoxObject::renderFrame(void* array) {
     drawMesh(root);
 }
 
-
 void BoxObject::drawMesh(const BaseMesh& mesh) {
     glm::mat resultLocalMatrix(mesh.local);
-    resultLocalMatrix = glm::translate(resultLocalMatrix, glm::vec3(0.0f, 0.0f, -40.0f));
+    resultLocalMatrix = glm::translate(resultLocalMatrix, position);
     static float degree = 0.f;
     degree += 0.005f;
     resultLocalMatrix = glm::rotate(resultLocalMatrix, glm::radians(degree), {1, 0, 0});

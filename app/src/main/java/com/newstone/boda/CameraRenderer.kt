@@ -10,7 +10,7 @@ import javax.microedition.khronos.opengles.GL10
 class CameraRenderer(val pixels: ByteArray, var listener: FPSEventListener, val asset: AssetManager): GLSurfaceView.Renderer {
     val timer = Timer()
     var count = 0L
-    val timerTask = object: TimerTask() {
+    private val timerTask = object: TimerTask() {
         override fun run() {
             listener.handle(count.toString())
             count = 0

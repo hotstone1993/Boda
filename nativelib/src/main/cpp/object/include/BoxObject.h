@@ -18,6 +18,7 @@ public:
 
     virtual void renderFrame(void* array = nullptr) override;
 
+    virtual void touchEvent(float x, float y) override;
 private:
     void drawMesh(const BaseMesh& mesh);
 

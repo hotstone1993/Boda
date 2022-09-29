@@ -29,3 +29,12 @@ Java_com_newstone_nativelib_NativeLib_step(JNIEnv* env, jclass clazz, jbyteArray
     mainScene->renderFrame(reinterpret_cast<unsigned char*>(inputBuffer));
     env->ReleaseByteArrayElements(input, inputBuffer, JNI_ABORT);
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_newstone_nativelib_NativeLib_touch(JNIEnv *env, jclass clazz, jfloat x, jfloat y) {
+    jfieldID instanceId = env->GetStaticFieldID(clazz, INSTANCE, "J");
+    MainScene* mainScene = reinterpret_cast<MainScene *>(env->GetStaticLongField(clazz, instanceId));
+
+    mainScene->touchEvent(x, y);
+}

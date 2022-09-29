@@ -20,6 +20,8 @@ public:
 
     bool setupGraphic(int width, int height, AAssetManager *mgr);
     void renderFrame(unsigned char* image);
+
+    void touchEvent(float x, float y);
 private:
     void initObjects();
 

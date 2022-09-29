@@ -64,6 +64,14 @@ public:
         }
     }
 
+    const glm::mat4& getPorjectionMatrix() {
+        return projectionMatrix;
+    }
+
+    const glm::mat4& getViewMatrix() {
+        return viewMatrix;
+    }
+
 private:
     unsigned int uboMatrices;
     std::unordered_map<size_t, unsigned int> cameraPositionLocation;

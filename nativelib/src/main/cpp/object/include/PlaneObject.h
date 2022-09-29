@@ -14,6 +14,7 @@ public:
 
     virtual void setupGraphic(int width, int height, std::shared_ptr<Camera>& camera, AAssetManager *mgr) override;
     virtual void renderFrame(void* array) override;
+    virtual void touchEvent(float x, float y) override;
 private:
     unsigned int loadSimpleTexture(unsigned char* array);
     unsigned int vertexShader = 0;

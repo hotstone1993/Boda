@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.MotionEvent
 import android.view.Surface
+import android.view.TouchDelegate
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.AspectRatio
@@ -18,6 +20,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.newstone.boda.databinding.ActivityMainBinding
+import com.newstone.nativelib.NativeLib
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -55,6 +58,14 @@ class MainActivity : AppCompatActivity() {
             setEGLContextFactory(ContextFactory())
             setEGLConfigChooser(ConfigChooser())
             setRenderer(CameraRenderer(input, listener, resources.assets))
+            setOnTouchListener { v, event ->
+                when(event.action) {
+                    MotionEvent.ACTION_UP -> {
+                        NativeLib.touch(2 * (event.x / v.width) - 1f, -2 * (event.y / v.height) + 1f)
+                    }
+                }
+                true
+            }
         }
     }
 
