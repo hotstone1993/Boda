@@ -2,7 +2,6 @@ package com.newstone.boda
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.content.res.AssetManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -132,10 +131,6 @@ class MainActivity : AppCompatActivity() {
                 Log.e(TAG, "Use case binding failed", exc)
             }
         }, ContextCompat.getMainExecutor(this))
-    }
-
-    private fun getModel(assetManager: AssetManager, path: String): ByteArray {
-        return assetManager.open(path).readBytes()
     }
 
     companion object {
