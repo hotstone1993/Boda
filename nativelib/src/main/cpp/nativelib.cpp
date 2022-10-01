@@ -20,13 +20,23 @@ Java_com_newstone_nativelib_NativeLib_init(JNIEnv* env, jclass clazz, jint w, ji
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_newstone_nativelib_NativeLib_step(JNIEnv* env, jclass clazz, jbyteArray input) {
+Java_com_newstone_nativelib_NativeLib_step(JNIEnv* env, jclass clazz) {
+    jfieldID instanceId = env->GetStaticFieldID(clazz, INSTANCE, "J");
+    MainScene* mainScene = reinterpret_cast<MainScene *>(env->GetStaticLongField(clazz, instanceId));
+
+    mainScene->renderFrame();
+}
+
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_newstone_nativelib_NativeLib_setImage(JNIEnv *env, jclass clazz, jbyteArray input) {
     jbyte* inputBuffer = env->GetByteArrayElements(input, nullptr);
 
     jfieldID instanceId = env->GetStaticFieldID(clazz, INSTANCE, "J");
     MainScene* mainScene = reinterpret_cast<MainScene *>(env->GetStaticLongField(clazz, instanceId));
 
-    mainScene->renderFrame(reinterpret_cast<unsigned char*>(inputBuffer));
+    mainScene->setImage(reinterpret_cast<unsigned char*>(inputBuffer));
     env->ReleaseByteArrayElements(input, inputBuffer, JNI_ABORT);
 }
 

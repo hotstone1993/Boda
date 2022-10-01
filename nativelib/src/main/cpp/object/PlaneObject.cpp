@@ -37,6 +37,9 @@ void PlaneObject::setupGraphic(int width, int height, std::shared_ptr<Camera>& c
     program = glCreateProgram();
     this->camera = camera;
 
+    imageSize = width * height * 3;
+    imageBuffer = std::make_unique<unsigned char[]>(imageSize);
+
     vertexShader = BODA::loadShader(GL_VERTEX_SHADER, glVertexShader);
     if (vertexShader == 0)
     {
@@ -103,11 +106,15 @@ void PlaneObject::renderFrame(void* array) {
 
     glUniformMatrix4fv(worldLocation, 1, GL_FALSE, glm::value_ptr(worldMatrix));
 
-    GLuint id = loadSimpleTexture(reinterpret_cast<unsigned char*>(array));
+    GLuint id = loadSimpleTexture(imageBuffer.get());
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
 
     glDeleteTextures(1, &id);
+}
+
+void PlaneObject::setImage(unsigned char* image) {
+    memcpy(imageBuffer.get(), image, sizeof(unsigned char) * imageSize);
 }
 
 unsigned int PlaneObject::loadSimpleTexture(unsigned char* array)

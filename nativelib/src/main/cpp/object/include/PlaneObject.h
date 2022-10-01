@@ -15,6 +15,9 @@ public:
     virtual void setupGraphic(int width, int height, std::shared_ptr<Camera>& camera, AAssetManager *mgr) override;
     virtual void renderFrame(void* array) override;
     virtual void touchEvent(float x, float y) override;
+
+
+    void setImage(unsigned char* image);
 private:
     unsigned int loadSimpleTexture(unsigned char* array);
     unsigned int vertexShader = 0;
@@ -27,6 +30,9 @@ private:
     unsigned short indices[6];
     float vertices[12];
     float textureCoordinates[8];
+
+    size_t imageSize = 0;
+    std::unique_ptr<unsigned char[]> imageBuffer;
 
     const char* glVertexShader =
             "#version 320 es\n"

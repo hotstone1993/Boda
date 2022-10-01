@@ -10,7 +10,6 @@ import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.Surface
-import android.view.TouchDelegate
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.AspectRatio
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         binding.glSurfaceView.apply {
             setEGLContextFactory(ContextFactory())
             setEGLConfigChooser(ConfigChooser())
-            setRenderer(CameraRenderer(input, listener, resources.assets))
+            setRenderer(CameraRenderer(listener, resources.assets))
             setOnTouchListener { v, event ->
                 when(event.action) {
                     MotionEvent.ACTION_UP -> {
@@ -120,6 +119,7 @@ class MainActivity : AppCompatActivity() {
             imageAnalyzer.setAnalyzer(executor, { image ->
                 val pixelStride = image.planes.first().pixelStride
                 image.planes.first().buffer.get(input, 0, image.width * image.height * pixelStride)
+                NativeLib.setImage(input)
                 image.close()
             })
 

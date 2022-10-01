@@ -45,11 +45,9 @@ bool MainScene::setupGraphic(int width, int height, AAssetManager *mgr) {
     return true;
 }
 
-void MainScene::renderFrame(unsigned char* image) {
+void MainScene::renderFrame() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-    mlDelegate.setArray(image);
 
     for (const std::unique_ptr<Light>& light: lights) {
         light->placeLight();
@@ -60,7 +58,17 @@ void MainScene::renderFrame(unsigned char* image) {
         if (type == ObjectType::BOX) {
             object->renderFrame(mlDelegate.getOutput());
         } else if (type == ObjectType::PLANE) {
-            object->renderFrame(image);
+            object->renderFrame();
+        }
+    }
+}
+
+void MainScene::setImage(unsigned char *image) {
+    mlDelegate.setArray(image);
+
+    for (const std::unique_ptr<BaseObject>& object: objects) {
+        if (object->getType() == ObjectType::PLANE) {
+            static_cast<PlaneObject*>(object.get())->setImage(image);
         }
     }
 }

@@ -7,7 +7,7 @@ import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class CameraRenderer(val pixels: ByteArray, var listener: FPSEventListener, val asset: AssetManager): GLSurfaceView.Renderer {
+class CameraRenderer(var listener: FPSEventListener, val asset: AssetManager): GLSurfaceView.Renderer {
     val timer = Timer()
     var count = 0L
     private val timerTask = object: TimerTask() {
@@ -27,7 +27,7 @@ class CameraRenderer(val pixels: ByteArray, var listener: FPSEventListener, val 
 
     override fun onDrawFrame(gl: GL10?) {
         count++
-        NativeLib.step(pixels)
+        NativeLib.step()
     }
 
     interface FPSEventListener {
