@@ -7,6 +7,7 @@
 
 #include "BaseObject.h"
 #include "ObjectFileLoader.h"
+#include "SimpleAnimationController.h"
 
 class BoxObject : public BaseObject {
 public:
@@ -36,6 +37,8 @@ private:
     unsigned int ksLocation{};
 
     BaseMesh root;
+
+    SimpleAnimationController controller;
 };
 
 

@@ -3,7 +3,7 @@
 //
 #include "include/BoxObject.h"
 
-BoxObject::BoxObject(const size_t& key): BaseObject(key) {
+BoxObject::BoxObject(const size_t& key): BaseObject(key), controller(50.0f) {
     objectType = ObjectType::BOX;
     loader = std::make_unique<ObjectFileLoader>();
     material = std::make_unique<BaseMaterial>();
@@ -125,8 +125,9 @@ void BoxObject::renderFrame(void* array) {
 void BoxObject::drawMesh(const BaseMesh& mesh) {
     glm::mat resultLocalMatrix(mesh.local);
     resultLocalMatrix = glm::translate(resultLocalMatrix, position);
+
     static float degree = 0.f;
-    degree += 0.005f;
+    degree += controller.getRotation();
     resultLocalMatrix = glm::rotate(resultLocalMatrix, glm::radians(degree), {1, 0, 0});
     resultLocalMatrix = glm::rotate(resultLocalMatrix, glm::radians(degree), {0, 1, 0});
     float scaleFactor = 0.2f;
